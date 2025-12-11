@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Relatório Checklist - Lift Control</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 30px;
+      max-width: 640px;
+      margin: auto;
+      background: #fff;
+      color: #223151;
+    }
+    h1 {
+      font-weight: 700;
+      font-size: 26px;
+      margin-bottom: 15px;
+    }
+    hr {
+      border: none;
+      border-bottom: 1px solid #bbb;
+      margin-bottom: 25px;
+    }
+    h2 {
+      font-weight: 700;
+      font-size: 20px;
+      margin-bottom: 15px;
+      color: #2962ff;
+    }
+    p, li {
+      font-size: 18px;
+      margin: 6px 0;
+    }
+    strong {
+      font-weight: 700;
+      color: #223151;
+    }
+    ul {
+      padding-left: 20px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Checklist Digital – Lift Control</h1>
+  <hr>
+
+  <section>
+    <h2>Dados do Condomínio</h2>
+    <p><strong>Nome:</strong> <span id="nome"></span></p>
+    <p><strong>Endereço:</strong> <span id="endereco"></span></p>
+  </section>
+
+  <section>
+    <h2>Dados da Manutenção</h2>
+    <p><strong>Elevador Inspecionado:</strong> <span id="elevadorInspecionado"></span></p>
+    <p><strong>Data:</strong> <span id="dataManutencao"></span></p>
+    <p><strong>Tipo:</strong> <span id="tipoManutencao"></span></p>
+    <p><strong>Técnico:</strong> <span id="nomeTecnico"></span></p>
+    <p><strong>Empresa:</strong> <span id="empresaTecnico"></span></p>
+    <p><strong>Registro:</strong> <span id="registroTecnico"></span></p>
+  </section>
+
+  <section>
+    <h2>Casa de Máquinas</h2>
+    <ul>
+      <li>Motor de tração: <span id="motor"></span></li>
+      <li>Freio eletromagnético: <span id="freio"></span></li>
+      <li>Redutor: <span id="redutor"></span></li>
+      <li>Quadro de comando: <span id="quadro"></span></li>
+      <li>Limitador de velocidade: <span id="limitador"></span></li>
+      <li>Cabos de tração: <span id="cabos"></span></li>
+      <li>Polias: <span id="polias"></span></li>
+      <li>Ventilação: <span id="ventilacao"></span></li>
+      <li>Iluminação de emergência: <span id="iluminacaoEmergencia"></span></li>
+      <li>Limpeza geral: <span id="limpeza"></span></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Cabina</h2>
+    <ul>
+      <li>Portas: <span id="portas"></span></li>
+      <li>Botões: <span id="botoes"></span></li>
+      <li>Display / Indicadores: <span id="display"></span></li>
+      <li>Iluminação interna: <span id="iluminacaoInterna"></span></li>
+      <li>Ventilação / Exaustor: <span id="ventilacaoCabina"></span></li>
+      <li>Interfone / Alarme: <span id="interfone"></span></li>
+      <li>Espelho / Acabamentos: <span id="espelho"></span></li>
+      <li>Piso / Nivelamento: <span id="piso"></span></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Poço</h2>
+    <ul>
+      <li>Amortecedores: <span id="amortecedores"></span></li>
+      <li>Limpeza do poço: <span id="limpezaPoco"></span></li>
+      <li>Drenagem de água: <span id="drenagem"></span></li>
+      <li>Iluminação: <span id="iluminacaoPoco"></span></li>
+      <li>Cabos elétricos: <span id="cabosEletricos"></span></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Reparos Executados</h2>
+    <p id="reparosExecutados"></p>
+  </section>
+
+  <section>
+    <h2>Observações / Recomendações</h2>
+    <p id="observacoes"></p>
+  </section>
+
+  <footer style="margin-top:40px; text-align:center; font-size:14px; color:#777;">
+    Gerado por Lift Control - 2025
+  </footer>
+
+  <script>
+    // Função para extrair parâmetro da URL
+    function getParam(name) {
+      return decodeURIComponent(new URLSearchParams(window.location.search).get(name) || '-');
+    }
+
+    // Função que preenche os spans a partir dos parâmetros da URL
+    function fillFields() {
+      const fields = [
+        'nome', 'endereco', 'elevadorInspecionado', 'dataManutencao', 'tipoManutencao',
+        'nomeTecnico', 'empresaTecnico', 'registroTecnico', 'motor', 'freio', 'redutor',
+        'quadro', 'limitador', 'cabos', 'polias', 'ventilacao', 'iluminacaoEmergencia',
+        'limpeza', 'portas', 'botoes', 'display', 'iluminacaoInterna', 'ventilacaoCabina',
+        'interfone', 'espelho', 'piso', 'amortecedores', 'limpezaPoco', 'drenagem',
+        'iluminacaoPoco', 'cabosEletricos', 'reparosExecutados', 'observacoes'
+      ];
+
+      fields.forEach(field => {
+        const el = document.getElementById(field);
+        if(el) {
+          let val = getParam(field);
+          if(val.toLowerCase() === 'ok') val = 'Ok';
+          else if(val.toLowerCase() === 'pendente') val = 'Pendente';
+          el.textContent = val;
+        }
+      });
+    }
+
+    window.onload = fillFields;
+  </script>
+</body>
+</html>
