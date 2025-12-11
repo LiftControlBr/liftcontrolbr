@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Checklist Digital – Lift Control</title>
+<title>Checklist Digital – Lift Control - Com PDF multipage</title>
 
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
@@ -20,7 +20,7 @@
     margin: 0 auto;
     background-color: #ffffff;
     border-radius: 14px;
-    padding: 45px 30px;
+    padding: 45px 35px;
     box-shadow: 0 10px 35px #112f52a0;
     color: #0c2340;
   }
@@ -111,11 +111,6 @@
   }
   button:hover {
     background-color: #184a6e;
-  }
-  button:disabled {
-    background-color: #a9bbc9;
-    cursor: not-allowed;
-    box-shadow: none;
   }
   @media (max-width: 600px) {
     form {
@@ -250,8 +245,8 @@
       });
 
       ['motor','freio','redutor','quadro','limitador','cabos','polias','ventilacao','iluminacaoEmergencia','limpeza',
-      'portas','botoes','display','iluminacaoInterna','ventilacaoCabina','interfone','espelho','piso',
-      'amortecedores','limpezaPoco','drenagem','iluminacaoPoco','cabosEletricos'].forEach(id => {
+          'portas','botoes','display','iluminacaoInterna','ventilacaoCabina','interfone','espelho','piso',
+          'amortecedores','limpezaPoco','drenagem','iluminacaoPoco','cabosEletricos'].forEach(id => {
         const el = e.target.elements[id];
         dados[id] = el && el.checked ? "Ok" : "Pendente";
       });
@@ -262,7 +257,6 @@
             Checklist Digital – Lift Control
           </h2>
           <hr style="border-color: #bbbcbe; margin: 10px 0 30px 0;" />
-          
           <h3 style="font-weight: 700; font-size: 18pt; color: #223151; margin-bottom: 10px;">Dados do Condomínio</h3>
           <p><strong style="color: #223151;">Nome:</strong> ${dados.nomeCondominio}</p>
           <p><strong style="color: #223151;">Endereço:</strong> ${dados.endereco}</p>
@@ -270,18 +264,14 @@
           <p><strong style="color: #223151;">Elevador Inspecionado:</strong> ${dados.elevadorInspecionado}</p>
           <p><strong style="color: #223151;">Email:</strong> ${dados.emailCondominio}</p>
           <p><strong style="color: #223151;">Telefone:</strong> ${dados.telefoneResponsavel}</p>
-          
           <hr style="border-color: #bbbcbe; margin: 30px 0;" />
-          
           <h3 style="font-weight: 700; font-size: 18pt; color: #223151; margin-bottom: 10px;">Manutenção</h3>
           <p><strong style="color: #223151;">Data:</strong> ${dados.dataManutencao}</p>
           <p><strong style="color: #223151;">Tipo:</strong> ${dados.tipoManutencao}</p>
           <p><strong style="color: #223151;">Técnico:</strong> ${dados.nomeTecnico}</p>
           <p><strong style="color: #223151;">Empresa:</strong> ${dados.empresaTecnico}</p>
           <p><strong style="color: #223151;">Registro:</strong> ${dados.registroTecnico || 'N/A'}</p>
-          
           <hr style="border-color: #bbbcbe; margin: 30px 0;" />
-          
           <h3 style="font-weight: 700; font-size: 18pt; color: #223151; margin-bottom: 10px;">Casa de Máquinas</h3>
           <ul>
             <li>Motor de tração: ${dados.motor}</li>
@@ -295,7 +285,6 @@
             <li>Iluminação de emergência: ${dados.iluminacaoEmergencia}</li>
             <li>Limpeza geral: ${dados.limpeza}</li>
           </ul>
-          
           <h3 style="font-weight: 700; font-size: 18pt; color: #223151; margin-top: 30px; margin-bottom: 10px;">Cabina</h3>
           <ul>
             <li>Portas: ${dados.portas}</li>
@@ -307,7 +296,6 @@
             <li>Espelho / Acabamentos: ${dados.espelho}</li>
             <li>Piso / Nivelamento: ${dados.piso}</li>
           </ul>
-          
           <h3 style="font-weight: 700; font-size: 18pt; color: #223151; margin-top: 30px; margin-bottom: 10px;">Poço</h3>
           <ul>
             <li>Amortecedores: ${dados.amortecedores}</li>
@@ -316,17 +304,12 @@
             <li>Iluminação: ${dados.iluminacaoPoco}</li>
             <li>Cabos elétricos: ${dados.cabosEletricos}</li>
           </ul>
-          
           <hr style="border-color: #bbbcbe; margin: 30px 0;" />
-          
           <h3 style="font-weight: 700; font-size: 18pt; color: #223151; margin-bottom: 10px;">Reparos Executados</h3>
           <p style="font-size: 16pt;">${dados.reparosExecutados}</p>
-          
           <h3 style="font-weight: 700; font-size: 18pt; color: #223151; margin-top: 30px; margin-bottom: 10px;">Observações / Recomendações</h3>
           <p style="font-size: 16pt;">${dados.observacoes || ''}</p>
-          
           <hr style="border-color: #bbbcbe; margin-top: 30px;" />
-          
           <p style="font-size: 14pt; color: #777; text-align: center;">Gerado por Lift Control - 2025</p>
         </div>`;
 
@@ -343,8 +326,21 @@
         const pdf = new jsPDF('p', 'pt', 'a4');
         const pdfWidth = pdf.internal.pageSize.getWidth() - 40;
         const pdfHeight = (canvasImg.height * pdfWidth) / canvasImg.width;
-        pdf.addImage(imgData, 'PNG', 20, 20, pdfWidth, pdfHeight);
-        pdf.save(`Checklist_${dados.nomeCondominio.replace(/\s+/g,"")}_${dados.elevadorInspecionado.replace(/\s+/g,"")}.pdf`);
+        // Multi-page handling
+        let heightLeft = pdfHeight;
+        let position = 20;
+
+        pdf.addImage(imgData, 'PNG', 20, position, pdfWidth, pdfHeight);
+        heightLeft -= pdf.internal.pageSize.getHeight() - 40;
+
+        while (heightLeft > 0) {
+          pdf.addPage();
+          position = heightLeft - pdfHeight + 20;
+          pdf.addImage(imgData, 'PNG', 20, position, pdfWidth, pdfHeight);
+          heightLeft -= pdf.internal.pageSize.getHeight() - 40;
+        }
+
+        pdf.save(`Checklist_${dados.nomeCondominio.replace(/\s+/g, "")}_${dados.elevadorInspecionado.replace(/\s+/g, "")}.pdf`);
         document.body.removeChild(container);
       });
     } catch (e) {
