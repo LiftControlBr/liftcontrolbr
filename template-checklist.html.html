@@ -20,7 +20,7 @@
     margin: 0 auto;
     background-color: #ffffff;
     border-radius: 14px;
-    padding: 40px 35px;
+    padding: 45px 30px;
     box-shadow: 0 10px 35px #112f52a0;
     color: #0c2340;
   }
@@ -223,7 +223,7 @@
   </div>
 
   <label for="reparosExecutados" style="margin-top: 30px;">Reparos Executados <span class="required">*</span></label>
-  <textarea id="reparosExecutados" name="reparosExecutados" minlength="10" placeholder="Descreva detalhadamente os reparos..." required></textarea>
+  <textarea id="reparosExecutados" name="reparosExecutados" minlength="10" required placeholder="Descreva detalhadamente os reparos..."></textarea>
 
   <label for="observacoes" style="margin-top: 20px;">Observações / Recomendações</label>
   <textarea id="observacoes" name="observacoes" placeholder="Observações importantes ou recomendações"></textarea>
@@ -234,15 +234,18 @@
 </form>
 
 <script>
-  document.getElementById('checklistForm').addEventListener('submit', e=>{
+  document.getElementById('checklistForm').addEventListener('submit', function(e) {
     e.preventDefault();
-    if(!e.target.checkValidity()){
+
+    if (!this.checkValidity()) {
       alert('Por favor, preencha todos os campos obrigatórios corretamente.');
-      e.target.reportValidity();
+      this.reportValidity();
       return;
     }
-    alert('Formulário válido! Você pode adicionar aqui a geração do PDF.');
+
+    alert('Formulário válido!\nAqui você pode implementar a geração do PDF.');
   });
 </script>
+
 </body>
 </html>
