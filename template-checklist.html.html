@@ -234,18 +234,106 @@
 </form>
 
 <script>
-  document.getElementById('checklistForm').addEventListener('submit', function(e) {
+  document.getElementById('checklistForm').addEventListener('submit', async e => {
     e.preventDefault();
 
-    if (!this.checkValidity()) {
+    if (!e.target.checkValidity()) {
       alert('Por favor, preencha todos os campos obrigatórios corretamente.');
-      this.reportValidity();
+      e.target.reportValidity();
       return;
     }
 
-    alert('Formulário válido!\nAqui você pode implementar a geração do PDF.');
+    try {
+      const dados = {};
+      new FormData(e.target).forEach((value, key) => {
+        dados[key] = value;
+      });
+
+      ['motor','freio','redutor','quadro','limitador','cabos','polias','ventilacao','iluminacaoEmergencia','limpeza','portas','botoes','display','iluminacaoInterna','ventilacaoCabina','interfone','espelho','piso','amortecedores','limpezaPoco','drenagem','iluminacaoPoco','cabosEletricos'].forEach(id => {
+        const el = e.target.elements[id];
+        dados[id] = el && el.checked ? "Ok" : "Pendente";
+      });
+
+      const content = `
+        <div style="font-family: Arial, sans-serif; padding: 20px; color: #253858; font-size: 14pt; line-height: 1.6;">
+          <h2 style="text-align:center; font-size: 18pt;">Checklist Digital – Lift Control</h2>
+          <hr />
+          <h3 style="font-size:16pt;">Dados do Condomínio</h3>
+          <p><strong>Nome:</strong> ${dados.nomeCondominio}</p>
+          <p><strong>Endereço:</strong> ${dados.endereco}</p>
+          <p><strong>Total de Elevadores:</strong> ${dados.totalElevadores}</p>
+          <p><strong>Elevador Inspecionado:</strong> ${dados.elevadorInspecionado}</p>
+          <p><strong>Email:</strong> ${dados.emailCondominio}</p>
+          <p><strong>Telefone:</strong> ${dados.telefoneResponsavel}</p>
+          <hr />
+          <h3 style="font-size:16pt;">Manutenção</h3>
+          <p><strong>Data:</strong> ${dados.dataManutencao}</p>
+          <p><strong>Tipo:</strong> ${dados.tipoManutencao}</p>
+          <p><strong>Técnico:</strong> ${dados.nomeTecnico}</p>
+          <p><strong>Empresa:</strong> ${dados.empresaTecnico}</p>
+          <p><strong>Registro:</strong> ${dados.registroTecnico || 'N/A'}</p>
+          <hr />
+          <h3 style="font-size:16pt;">Casa de Máquinas</h3>
+          <ul>
+            <li>Motor de tração: ${dados.motor}</li>
+            <li>Freio eletromagnético: ${dados.freio}</li>
+            <li>Redutor: ${dados.redutor}</li>
+            <li>Quadro de comando: ${dados.quadro}</li>
+            <li>Limitador de velocidade: ${dados.limitador}</li>
+            <li>Cabos de tração: ${dados.cabos}</li>
+            <li>Polias: ${dados.polias}</li>
+            <li>Ventilação: ${dados.ventilacao}</li>
+            <li>Iluminação de emergência: ${dados.iluminacaoEmergencia}</li>
+            <li>Limpeza geral: ${dados.limpeza}</li>
+          </ul>
+          <h3 style="font-size:16pt;">Cabina</h3>
+          <ul>
+            <li>Portas: ${dados.portas}</li>
+            <li>Botões: ${dados.botoes}</li>
+            <li>Display / Indicadores: ${dados.display}</li>
+            <li>Iluminação interna: ${dados.iluminacaoInterna}</li>
+            <li>Ventilação / Exaustor: ${dados.ventilacaoCabina}</li>
+            <li>Interfone / Alarme: ${dados.interfone}</li>
+            <li>Espelho / Acabamentos: ${dados.espelho}</li>
+            <li>Piso / Nivelamento: ${dados.piso}</li>
+          </ul>
+          <h3 style="font-size:16pt;">Poço</h3>
+          <ul>
+            <li>Amortecedores: ${dados.amortecedores}</li>
+            <li>Limpeza do poço: ${dados.limpezaPoco}</li>
+            <li>Drenagem de água: ${dados.drenagem}</li>
+            <li>Iluminação: ${dados.iluminacaoPoco}</li>
+            <li>Cabos elétricos: ${dados.cabosEletricos}</li>
+          </ul>
+          <hr />
+          <h3 style="font-size:16pt;">Reparos Executados</h3>
+          <p style="font-size:14pt;">${dados.reparosExecutados}</p>
+          <h3 style="font-size:16pt;">Observações / Recomendações</h3>
+          <p style="font-size:14pt;">${dados.observacoes || ''}</p>
+          <hr/>
+          <p style="font-size:10pt; color:#666; text-align:center;">Gerado por Lift Control - 2025</p>
+        </div>`;
+
+      const container = document.createElement('div');
+      container.style.padding = "20px";
+      container.style.background = "white";
+      container.innerHTML = content;
+      document.body.appendChild(container);
+
+      html2canvas(container, { scale: 3 }).then(canvasImg => {
+        const imgData = canvasImg.toDataURL('image/png');
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'pt', 'a4');
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (canvasImg.height * pdfWidth) / canvasImg.width;
+        pdf.addImage(imgData, 'PNG', 10, 10, pdfWidth - 20, pdfHeight);
+        pdf.save(`Checklist_${dados.nomeCondominio.replace(/\s+/g,"")}_${dados.elevadorInspecionado.replace(/\s+/g,"")}.pdf`);
+        document.body.removeChild(container);
+      });
+    } catch (e) {
+      alert("Erro ao gerar PDF:\n" + e);
+    }
   });
 </script>
-
 </body>
 </html>
