@@ -88,24 +88,6 @@
     cursor: pointer;
     flex-shrink: 0;
   }
-  .signature-section {
-    margin-top: 40px;
-  }
-  label.signature-label {
-    font-weight: 700;
-    font-size: 16pt;
-    margin-bottom: 12px;
-    display: block;
-    color: #072a56;
-  }
-  #signature-pad {
-    border: 2px dashed #2a65ad;
-    border-radius: 18px;
-    width: 100%;
-    height: 220px;
-    cursor: crosshair;
-    background: #fefeff;
-  }
   .buttons {
     margin-top: 30px;
     display: flex;
@@ -121,21 +103,11 @@
     border: none;
     cursor: pointer;
     transition: background-color 0.3s ease;
-  }
-  button.clear-button {
-    background-color: #dd4b39;
-    color: white;
-    box-shadow: 0 5px 15px rgb(221 75 57 / 0.6);
-  }
-  button.clear-button:hover {
-    background-color: #b73728;
-  }
-  button.submit-button {
     background-color: #2a65ad;
     color: white;
     box-shadow: 0 5px 15px rgb(42 101 173 / 0.7);
   }
-  button.submit-button:hover {
+  button:hover {
     background-color: #184a6e;
   }
   button:disabled {
@@ -157,6 +129,10 @@
       gap: 20px;
       align-items: stretch;
     }
+  }
+  .required {
+    color: #dd4b39;
+    margin-left: 3px;
   }
 </style>
 </head>
@@ -250,184 +226,22 @@
   <label for="observacoes" style="margin-top: 20px;">Observações / Recomendações</label>
   <textarea id="observacoes" name="observacoes" placeholder="Observações importantes ou recomendações"></textarea>
 
-  <label class="signature-label" style="margin-top: 40px;">Assinatura do Técnico <span class="required">*</span></label>
-  <canvas id="signature-pad" style="border: 2px dashed #3498db; border-radius: 15px; width: 100%; height: 220px; background-color: #f9fdff; cursor: crosshair;"></canvas>
-
   <div style="margin-top: 30px; text-align:center;">
-    <button type="button" id="clear-signature" style="margin-right: 20px; background-color: #e74c3c; color: white; border: none; padding: 12px 30px; border-radius: 50px; font-weight: 600; cursor: pointer;">Limpar Assinatura</button>
-    <button type="submit" id="generate-pdf" style="background-color: #2980b9; color: white; border: none; padding: 12px 45px; border-radius: 50px; font-weight: 600; cursor: pointer;">Gerar PDF</button>
+    <button type="submit" style="background-color: #2980b9; color: white; border: none; padding: 12px 45px; border-radius: 50px; font-weight: 600; cursor: pointer; font-size: 18px;">Enviar</button>
   </div>
 </form>
 
-<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script>
-  const canvas = document.getElementById('signature-pad');
-  const ctx = canvas.getContext('2d');
-  let isDrawing = false;
-
-  function resizeCanvas() {
-    const ratio = window.devicePixelRatio || 1;
-    canvas.width = canvas.offsetWidth * ratio;
-    canvas.height = 220 * ratio;
-    canvas.style.height = '220px';
-    ctx.scale(ratio, ratio);
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-    ctx.lineWidth = 3;
-    ctx.strokeStyle = '#3498db';
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-  }
-  resizeCanvas();
-  window.addEventListener('resize', resizeCanvas);
-
-  canvas.addEventListener('mousedown', e => {
-    isDrawing = true;
-    ctx.beginPath();
-    ctx.moveTo(e.offsetX, e.offsetY);
-  });
-  canvas.addEventListener('mousemove', e => {
-    if (!isDrawing) return;
-    ctx.lineTo(e.offsetX, e.offsetY);
-    ctx.stroke();
-  });
-  window.addEventListener('mouseup', () => isDrawing = false);
-
-  canvas.addEventListener('touchstart', e => {
+  document.getElementById('checklistForm').addEventListener('submit', e => {
     e.preventDefault();
-    const rect = canvas.getBoundingClientRect();
-    const touch = e.touches[0];
-    ctx.beginPath();
-    ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
-    isDrawing = true;
-  });
-  canvas.addEventListener('touchmove', e => {
-    e.preventDefault();
-    if (!isDrawing) return;
-    const rect = canvas.getBoundingClientRect();
-    const touch = e.touches[0];
-    ctx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
-    ctx.stroke();
-  });
-  window.addEventListener('touchend', e => {
-    e.preventDefault();
-    isDrawing = false;
-  });
-
-  document.getElementById('clear-signature').addEventListener('click', () => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-  });
-
-  document.getElementById('checklistForm').addEventListener('submit', async e => {
-    e.preventDefault();
-
     if (!e.target.checkValidity()) {
       alert('Por favor, preencha todos os campos obrigatórios corretamente.');
       e.target.reportValidity();
       return;
     }
-
-    const blank = document.createElement('canvas');
-    blank.width = canvas.width;
-    blank.height = canvas.height;
-    if (canvas.toDataURL() === blank.toDataURL()) {
-      alert('Por favor, assine o checklist.');
-      return;
-    }
-
-    try {
-      const dados = {};
-      new FormData(e.target).forEach((value, key) => {
-        dados[key] = value;
-      });
-
-      ['motor','freio','redutor','quadro','limitador','cabos','polias','ventilacao','iluminacaoEmergencia','limpeza','portas','botoes','display','iluminacaoInterna','ventilacaoCabina','interfone','espelho','piso','amortecedores','limpezaPoco','drenagem','iluminacaoPoco','cabosEletricos'].forEach(id => {
-        dados[id] = document.getElementsByName(id)[0].checked ? "Ok" : "Pendente";
-      });
-      dados['assinatura'] = canvas.toDataURL();
-
-      const content = `
-        <div style="font-family: Arial, sans-serif; padding: 20px; color: #253858; font-size: 14pt; line-height: 1.6;">
-          <h2 style="text-align:center; font-size: 18pt;">Checklist Digital – Lift Control</h2>
-          <hr/>
-          <h3 style="font-size:16pt;">Dados do Condomínio</h3>
-          <p><strong>Nome:</strong> ${dados.nomeCondominio}</p>
-          <p><strong>Endereço:</strong> ${dados.endereco}</p>
-          <p><strong>Total de Elevadores:</strong> ${dados.totalElevadores}</p>
-          <p><strong>Elevador Inspecionado:</strong> ${dados.elevadorInspecionado}</p>
-          <p><strong>Email:</strong> ${dados.emailCondominio}</p>
-          <p><strong>Telefone:</strong> ${dados.telefoneResponsavel}</p>
-          <hr/>
-          <h3 style="font-size:16pt;">Manutenção</h3>
-          <p><strong>Data:</strong> ${dados.dataManutencao}</p>
-          <p><strong>Tipo:</strong> ${dados.tipoManutencao}</p>
-          <p><strong>Técnico:</strong> ${dados.nomeTecnico}</p>
-          <p><strong>Empresa:</strong> ${dados.empresaTecnico}</p>
-          <p><strong>Registro:</strong> ${dados.registroTecnico || 'N/A'}</p>
-          <hr/>
-          <h3 style="font-size:16pt;">Casa de Máquinas</h3>
-          <ul>
-            <li>Motor de tração: ${dados.motor}</li>
-            <li>Freio eletromagnético: ${dados.freio}</li>
-            <li>Redutor: ${dados.redutor}</li>
-            <li>Quadro de comando: ${dados.quadro}</li>
-            <li>Limitador de velocidade: ${dados.limitador}</li>
-            <li>Cabos de tração: ${dados.cabos}</li>
-            <li>Polias: ${dados.polias}</li>
-            <li>Ventilação: ${dados.ventilacao}</li>
-            <li>Iluminação de emergência: ${dados.iluminacaoEmergencia}</li>
-            <li>Limpeza geral: ${dados.limpeza}</li>
-          </ul>
-          <h3 style="font-size:16pt;">Cabina</h3>
-          <ul>
-            <li>Portas: ${dados.portas}</li>
-            <li>Botões: ${dados.botoes}</li>
-            <li>Display / Indicadores: ${dados.display}</li>
-            <li>Iluminação interna: ${dados.iluminacaoInterna}</li>
-            <li>Ventilação / Exaustor: ${dados.ventilacaoCabina}</li>
-            <li>Interfone / Alarme: ${dados.interfone}</li>
-            <li>Espelho / Acabamentos: ${dados.espelho}</li>
-            <li>Piso / Nivelamento: ${dados.piso}</li>
-          </ul>
-          <h3 style="font-size:16pt;">Poço</h3>
-          <ul>
-            <li>Amortecedores: ${dados.amortecedores}</li>
-            <li>Limpeza do poço: ${dados.limpezaPoco}</li>
-            <li>Drenagem de água: ${dados.drenagem}</li>
-            <li>Iluminação: ${dados.iluminacaoPoco}</li>
-            <li>Cabos elétricos: ${dados.cabosEletricos}</li>
-          </ul>
-          <hr/>
-          <h3 style="font-size:16pt;">Reparos Executados</h3>
-          <p style="font-size:14pt;">${dados.reparosExecutados}</p>
-          <h3 style="font-size:16pt;">Observações / Recomendações</h3>
-          <p style="font-size:14pt;">${dados.observacoes || ''}</p>
-          <hr/>
-          <h3 style="font-size:16pt;">Assinatura do Técnico</h3>
-          <img src="${dados.assinatura}" alt="Assinatura Técnico" style="width:300px; border:1px solid #3498db; border-radius:8px;" />
-          <p style="font-size:10pt; color:#666; text-align:center;">Gerado por Lift Control - 2025</p>
-        </div>`;
-
-      const container = document.createElement('div');
-      container.style.padding = "20px";
-      container.style.background = "white";
-      container.innerHTML = content;
-      document.body.appendChild(container);
-
-      html2canvas(container, { scale: 3 }).then(canvasImg => {
-        const imgData = canvasImg.toDataURL('image/png');
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF('p', 'pt', 'a4');
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (canvasImg.height * pdfWidth) / canvasImg.width;
-        pdf.addImage(imgData, 'PNG', 10, 10, pdfWidth - 20, pdfHeight);
-        pdf.save(`Checklist_${dados.nomeCondominio.replace(/\s+/g,"")}_${dados.elevadorInspecionado.replace(/\s+/g,"")}.pdf`);
-        document.body.removeChild(container);
-      });
-    } catch (e) {
-      alert("Erro ao gerar PDF:\n"+e);
-    }
+    alert('Formulário enviado (simulação).');
   });
 </script>
+
 </body>
 </html>
