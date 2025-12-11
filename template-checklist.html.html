@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Checklist Digital – Lift Control - PDF Multipage Melhorado</title>
+<title>Checklist Digital – Lift Control - PDF Ajustado</title>
 
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
@@ -58,13 +58,14 @@
   }
   .checklist-section {
     margin-top: 35px;
-    font-size: 14pt;
+    font-size: 13pt; /* DIMINUI PARA 13PT */
   }
   .checklist-section h2 {
     border-bottom: 3px solid #2a65ad;
     margin-bottom: 20px;
     color: #2a65ad;
     font-weight: 700;
+    font-size: 17pt; /* DIMINUI PARA 17PT */
   }
   label.check-item {
     display: flex;
@@ -76,7 +77,7 @@
     cursor: pointer;
     user-select: none;
     font-weight: 600;
-    font-size: 16pt;
+    font-size: 13pt; /* DIMINUI PARA 13PT */
     color: #104080;
     transition: background-color 0.3s;
   }
@@ -85,8 +86,8 @@
   }
   label.check-item input[type="checkbox"] {
     margin-right: 15px;
-    width: 26px;
-    height: 26px;
+    width: 24px;  /* DIMINUI PARA 24PX */
+    height: 24px;
     cursor: pointer;
     flex-shrink: 0;
   }
@@ -99,7 +100,7 @@
   }
   button {
     padding: 15px 50px;
-    font-size: 18pt;
+    font-size: 17pt; /* DIMINUI PARA 17PT */
     font-weight: 700;
     border-radius: 50px;
     border: none;
@@ -124,7 +125,7 @@
     button {
       width: 100%;
       padding: 20px 0;
-      font-size: 20pt;
+      font-size: 19pt; /* ligeira subida para mobile */
     }
     .buttons {
       flex-direction: column;
@@ -222,7 +223,7 @@
     <label class="check-item"><input type="checkbox" name="cabosEletricos" /> Cabos elétricos - Fixação</label>
   </div>
 
-  <label for="reparosExecutados" style="margin-top: 30px;">Reparos Executados</label>
+  <label for="reparosExecutados" style="margin-top: 30px;">Reparos Executados <span class="required">*</span></label>
   <textarea id="reparosExecutados" name="reparosExecutados" minlength="10" required placeholder="Descreva detalhadamente os reparos..."></textarea>
 
   <label for="observacoes" style="margin-top: 20px;">Observações / Recomendações</label>
@@ -256,29 +257,38 @@
         dados[id] = el && el.checked ? "Ok" : "Pendente";
       });
 
+      // Convertendo data para formato DD/MM/AAAA
+      function formatDateBR(dateStr) {
+        if(!dateStr) return '-';
+        const dateParts = dateStr.split("-");
+        if(dateParts.length !== 3) return dateStr;
+        return `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+      }
+      dados.dataManutencao = formatDateBR(dados.dataManutencao);
+
       const content = `
-        <div style="font-family: Arial, sans-serif; padding: 20px; color: #223151; font-size: 18pt; line-height: 1.6;">
-          <h2 style="text-align:center; font-weight: 700; font-size: 22pt; color: #223151;">
+        <div style="font-family: Arial, sans-serif; padding: 20px; color: #223151; font-size: 16pt; line-height: 1.6;">
+          <h2 style="text-align:center; font-weight: 700; font-size: 20pt; color: #223151;">
             Checklist Digital – Lift Control
           </h2>
           <hr style="border-color: #bbbcbe; margin: 10px 0 30px 0;" />
           
           <h3 style="font-weight: 700; font-size: 18pt; color: #223151; margin-bottom: 10px;">Dados do Condomínio</h3>
-          <p><strong style="color: #223151;">Nome:</strong> ${dados.nomeCondominio}</p>
-          <p><strong style="color: #223151;">Endereço:</strong> ${dados.endereco}</p>
-          <p><strong style="color: #223151;">Total de Elevadores:</strong> ${dados.totalElevadores}</p>
-          <p><strong style="color: #223151;">Elevador Inspecionado:</strong> ${dados.elevadorInspecionado}</p>
-          <p><strong style="color: #223151;">Email:</strong> ${dados.emailCondominio}</p>
-          <p><strong style="color: #223151;">Telefone:</strong> ${dados.telefoneResponsavel}</p>
+          <p><strong>Nome:</strong> ${dados.nomeCondominio}</p>
+          <p><strong>Endereço:</strong> ${dados.endereco}</p>
+          <p><strong>Total de Elevadores:</strong> ${dados.totalElevadores}</p>
+          <p><strong>Elevador Inspecionado:</strong> ${dados.elevadorInspecionado}</p>
+          <p><strong>Email:</strong> ${dados.emailCondominio}</p>
+          <p><strong>Telefone:</strong> ${dados.telefoneResponsavel}</p>
           
           <hr style="border-color: #bbbcbe; margin: 30px 0;" />
           
           <h3 style="font-weight: 700; font-size: 18pt; color: #223151; margin-bottom: 10px;">Manutenção</h3>
-          <p><strong style="color: #223151;">Data:</strong> ${dados.dataManutencao}</p>
-          <p><strong style="color: #223151;">Tipo:</strong> ${dados.tipoManutencao}</p>
-          <p><strong style="color: #223151;">Técnico:</strong> ${dados.nomeTecnico}</p>
-          <p><strong style="color: #223151;">Empresa:</strong> ${dados.empresaTecnico}</p>
-          <p><strong style="color: #223151;">Registro:</strong> ${dados.registroTecnico || 'N/A'}</p>
+          <p><strong>Data:</strong> ${dados.dataManutencao}</p>
+          <p><strong>Tipo:</strong> ${dados.tipoManutencao}</p>
+          <p><strong>Técnico:</strong> ${dados.nomeTecnico}</p>
+          <p><strong>Empresa:</strong> ${dados.empresaTecnico}</p>
+          <p><strong>Registro:</strong> ${dados.registroTecnico || 'N/A'}</p>
           
           <hr style="border-color: #bbbcbe; margin: 30px 0;" />
           
@@ -344,20 +354,18 @@
         const pdfWidth = pdf.internal.pageSize.getWidth() - 40;
         const pdfHeight = (canvasImg.height * pdfWidth) / canvasImg.width;
         
-        // MARGENS
         let heightLeft = pdfHeight;
         let position = 20;
         
         pdf.addImage(imgData, 'PNG', 20, position, pdfWidth, pdfHeight);
         heightLeft -= pdf.internal.pageSize.getHeight() - 40;
-
-        // Loop para múltiplas páginas com margem superior ajustada
+        
         while (heightLeft > 0) {
           pdf.addPage();
           pdf.addImage(imgData, 'PNG', 20, 20, pdfWidth, pdfHeight);
           heightLeft -= pdf.internal.pageSize.getHeight() - 40;
         }
-
+        
         pdf.save(`Checklist_${dados.nomeCondominio.replace(/\s+/g,"")}_${dados.elevadorInspecionado.replace(/\s+/g,"")}.pdf`);
         document.body.removeChild(container);
       });
