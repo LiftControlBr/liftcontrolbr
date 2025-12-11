@@ -5,33 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Checklist Digital de Manutenção - Elevador</title>
 
-<!-- Bibliotecas para gerar PDF e capturar canvas -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <style>
-  /* Reset e base */
-  *, *::before, *::after {
-    box-sizing: border-box;
-  }
   body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: Arial, sans-serif;
     background: #f9fafb;
-    margin: 0;
-    padding: 20px;
-    color: #333;
+    margin: 0; padding: 20px; color: #333;
   }
-  h1 {
-    text-align: center;
-    color: #2c3e50;
-    margin-bottom: 30px;
-  }
+  h1 { text-align:center; margin-bottom:30px; color:#222; }
   form {
     max-width: 720px;
     background: white;
     margin: 0 auto;
-    border-radius: 12px;
     padding: 30px;
+    border-radius: 12px;
     box-shadow: 0 6px 20px rgba(0,0,0,0.1);
   }
   label {
@@ -39,510 +28,303 @@
     margin-top: 18px;
     font-weight: 600;
     font-size: 15px;
-    color: #34495e;
+    color: #111;
   }
-  input[type="text"],
-  input[type="email"],
-  input[type="number"],
-  input[type="date"],
-  select,
-  textarea {
+  input[type="text"], input[type="email"], input[type="number"], input[type="date"], select, textarea {
     width: 100%;
     padding: 12px 15px;
     margin-top: 6px;
-    border: 1.5px solid #bdc3c7;
-    border-radius: 8px;
     font-size: 15px;
+    border: 1.5px solid #ccc;
+    border-radius: 8px;
+    box-sizing: border-box;
     transition: border-color 0.3s ease;
   }
-  input[type="text"]:focus,
-  input[type="email"]:focus,
-  input[type="number"]:focus,
-  input[type="date"]:focus,
-  select:focus,
-  textarea:focus {
-    border-color: #3498db;
+  input[type="text"]:focus, input[type="email"]:focus, input[type="number"]:focus, input[type="date"]:focus, select:focus, textarea:focus {
+    border-color: #4a90e2;
     outline: none;
   }
   textarea {
     resize: vertical;
     min-height: 80px;
   }
+  /* checklist estilos */
   .checklist-section {
     margin-top: 25px;
   }
   .checklist-section h2 {
     margin-bottom: 15px;
-    color: #2c3e50;
-    border-bottom: 2px solid #3498db;
+    color: #222;
+    border-bottom: 2px solid #4a90e2;
     padding-bottom: 5px;
   }
-  /* Checkbox com label clicável e grande para mobile */
+  /* label é clicavel para checkbox */
   .check-item {
     display: flex;
     align-items: center;
-    background: #ecf0f1;
+    background: #eee;
     padding: 10px 15px;
     border-radius: 8px;
     margin-bottom: 12px;
     cursor: pointer;
-    transition: background-color 0.25s ease;
     user-select: none;
   }
   .check-item:hover {
-    background: #d6eaf8;
+    background: #dbe9fb;
   }
   .check-item input[type="checkbox"] {
-    width: 25px;
-    height: 25px;
+    width: 26px;
+    height: 26px;
     margin-right: 15px;
     cursor: pointer;
     flex-shrink: 0;
   }
+  /* Assinatura */
   .signature-section {
     margin-top: 30px;
   }
-  .signature-label {
+  label.signature-label {
     font-weight: 600;
     font-size: 15px;
-    color: #34495e;
+    color: #111;
     margin-bottom: 6px;
   }
   #signature-pad {
-    border: 2px dashed #3498db;
+    border: 2px dashed #4a90e2;
     border-radius: 12px;
     width: 100%;
     height: 200px;
-    background-color: #f7fbff;
+    background-color: #f4f9ff;
     cursor: crosshair;
   }
+  /* Botões */
   .buttons {
     margin-top: 30px;
+    text-align: center;
     display: flex;
     justify-content: center;
     gap: 25px;
     flex-wrap: wrap;
   }
   button {
-    background-color: #3498db;
+    background-color: #4a90e2;
     color: white;
     border: none;
     border-radius: 50px;
     padding: 14px 45px;
     font-size: 17px;
-    font-weight: 700;
+    font-weight: 600;
     cursor: pointer;
-    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
     transition: background-color 0.3s ease, transform 0.2s ease;
   }
   button:hover:not(:disabled) {
-    background-color: #2980b9;
+    background-color: #357ABD;
     transform: translateY(-3px);
   }
   button:disabled {
     background-color: #aaa;
     cursor: not-allowed;
-    box-shadow: none;
     transform: none;
   }
   button.clear-button {
-    background-color: #e74c3c;
+    background-color: #d9534f;
   }
   button.clear-button:hover:not(:disabled) {
-    background-color: #c0392b;
-  }
-  /* Campo obrigatório asterisco */
-  .required {
-    color: #e74c3c;
-    margin-left: 3px;
+    background-color: #c9302c;
   }
   @media (max-width: 480px) {
-    form {
-      padding: 20px 15px;
-    }
+    form { padding: 20px 15px; }
     button {
       width: 100%;
-      padding: 15px 0;
+      padding: 16px 0;
       font-size: 18px;
     }
-    .buttons {
-      flex-direction: column;
-      gap: 15px;
-    }
+    .buttons { flex-direction: column; gap: 15px; }
   }
 </style>
 </head>
 <body>
-  <h1>Checklist Digital de Manutenção - Elevador</h1>
-  <form id="checklistForm" novalidate>
 
-    <label for="nomeCondominio">Nome do Condomínio <span class="required">*</span></label>
-    <input type="text" id="nomeCondominio" name="nomeCondominio" placeholder="Ex: Edifício Solar das Palmeiras" required autocomplete="off"/>
+<h1>Checklist Digital de Manutenção - Elevador</h1>
 
-    <label for="endereco">Endereço Completo <span class="required">*</span></label>
-    <input type="text" id="endereco" name="endereco" required autocomplete="off"/>
+<form id="checklistForm" novalidate>
 
-    <label for="totalElevadores">Total de Elevadores no Prédio <span class="required">*</span></label>
-    <input type="number" id="totalElevadores" name="totalElevadores" min="1" required autocomplete="off"/>
+  <label for="nomeCondominio">Nome do Condomínio <span style="color:red;">*</span></label>
+  <input type="text" id="nomeCondominio" name="nomeCondominio" placeholder="Ex: Edifício Solar das Palmeiras" required autocomplete="off" />
 
-    <label for="elevadorInspecionado">Elevador Inspecionado <span class="required">*</span></label>
-    <select id="elevadorInspecionado" name="elevadorInspecionado" required>
-      <option value="" disabled selected>Selecione...</option>
-      <option value="Social">Social</option>
-      <option value="Serviço">Serviço</option>
-      <option value="Elevador 1">Elevador 1</option>
-      <option value="Elevador 2">Elevador 2</option>
-      <option value="Elevador 3">Elevador 3</option>
-    </select>
+  <label for="endereco">Endereço Completo <span style="color:red;">*</span></label>
+  <input type="text" id="endereco" name="endereco" required autocomplete="off" />
 
-    <label for="emailCondominio">Email do Condomínio <span class="required">*</span></label>
-    <input type="email" id="emailCondominio" name="emailCondominio" placeholder="contato@condominio.com" required autocomplete="off"/>
+  <label for="totalElevadores">Total de Elevadores no Prédio <span style="color:red;">*</span></label>
+  <input type="number" id="totalElevadores" name="totalElevadores" min="1" required autocomplete="off" />
 
-    <label for="telefoneResponsavel">Telefone do Responsável <span class="required">*</span></label>
-    <input type="text" id="telefoneResponsavel" name="telefoneResponsavel" placeholder="(13) 99999-9999" required autocomplete="off" pattern="^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$" title="Informe telefone no formato (13) 99999-9999"/>
+  <label for="elevadorInspecionado">Elevador Inspecionado <span style="color:red;">*</span></label>
+  <select id="elevadorInspecionado" name="elevadorInspecionado" required style="font-size:18px; padding:12px;">
+    <option value="" disabled selected>Selecione...</option>
+    <option value="Social">Social</option>
+    <option value="Serviço">Serviço</option>
+    <option value="Elevador 1">Elevador 1</option>
+    <option value="Elevador 2">Elevador 2</option>
+    <option value="Elevador 3">Elevador 3</option>
+  </select>
 
-    <label for="dataManutencao">Data da Manutenção <span class="required">*</span></label>
-    <input type="date" id="dataManutencao" name="dataManutencao" required />
+  <label for="emailCondominio">Email do Condomínio <span style="color:red;">*</span></label>
+  <input type="email" id="emailCondominio" name="emailCondominio" placeholder="contato@condominio.com" required autocomplete="off" />
 
-    <label for="tipoManutencao">Tipo de Manutenção <span class="required">*</span></label>
-    <select id="tipoManutencao" name="tipoManutencao" required>
-      <option value="" disabled selected>Selecione...</option>
-      <option value="Preventiva">Preventiva</option>
-      <option value="Corretiva">Corretiva</option>
-      <option value="Emergencial">Emergencial</option>
-      <option value="Inspeção">Inspeção</option>
-    </select>
+  <label for="telefoneResponsavel">Telefone do Responsável <span style="color:red;">*</span></label>
+  <input type="text" id="telefoneResponsavel" name="telefoneResponsavel" placeholder="(13) 99999-9999" required autocomplete="off" pattern="^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$" title="Informe telefone no formato (13) 99999-9999"/>
 
-    <label for="nomeTecnico">Nome Completo do Técnico <span class="required">*</span></label>
-    <input type="text" id="nomeTecnico" name="nomeTecnico" placeholder="Nome completo" required autocomplete="off"/>
+  <label for="dataManutencao">Data da Manutenção <span style="color:red;">*</span></label>
+  <input type="date" id="dataManutencao" name="dataManutencao" required />
 
-    <label for="empresaTecnico">Empresa do Técnico <span class="required">*</span></label>
-    <input type="text" id="empresaTecnico" name="empresaTecnico" required autocomplete="off"/>
+  <label for="tipoManutencao">Tipo de Manutenção <span style="color:red;">*</span></label>
+  <select id="tipoManutencao" name="tipoManutencao" required style="font-size:18px; padding:12px;">
+    <option value="" disabled selected>Selecione...</option>
+    <option value="Preventiva">Preventiva</option>
+    <option value="Corretiva">Corretiva</option>
+    <option value="Emergencial">Emergencial</option>
+    <option value="Inspeção">Inspeção</option>
+  </select>
 
-    <label for="registroTecnico">CREA / Registro Profissional</label>
-    <input type="text" id="registroTecnico" name="registroTecnico" autocomplete="off"/>
+  <label for="nomeTecnico">Nome Completo do Técnico <span style="color:red;">*</span></label>
+  <input type="text" id="nomeTecnico" name="nomeTecnico" placeholder="Nome completo" required autocomplete="off" />
 
-    <div class="checklist-section">
-      <h2>Casa de Máquinas</h2>
-      <label class="check-item">
-        <input type="checkbox" id="motor" name="motor" />
-        Motor de tração - Estado geral
-      </label>
-      <label class="check-item">
-        <input type="checkbox" id="freio" name="freio"/>
-        Freio eletromagnético - Funcionamento
-      </label>
-      <label class="check-item">
-        <input type="checkbox" id="redutor" name="redutor" />
-        Redutor - Nível de óleo / ruídos
-      </label>
-      <label class="check-item">
-        <input type="checkbox" id="quadro" name="quadro" />
-        Quadro de comando - Limpeza / conexões
-      </label>
-      <label class="check-item">
-        <input type="checkbox" id="limitador" name="limitador" />
-        Limitador de velocidade - Teste
-      </label>
-      <label class="check-item">
-        <input type="checkbox" id="cabos" name="cabos" />
-        Cabos de tração - Desgaste / lubrificação
-      </label>
-      <label class="check-item">
-        <input type="checkbox" id="polias" name="polias" />
-        Polias - Estado / alinhamento
-      </label>
-      <label class="check-item">
-        <input type="checkbox" id="ventilacao" name="ventilacao" />
-        Ventilação da casa de máquinas
-      </label>
-      <label class="check-item">
-        <input type="checkbox" id="iluminacaoEmergencia" name="iluminacaoEmergencia" />
-        Iluminação de emergência
-      </label>
-      <label class="check-item">
-        <input type="checkbox" id="limpeza" name="limpeza" />
-        Limpeza geral do ambiente
-      </label>
+  <label for="empresaTecnico">Empresa do Técnico <span style="color:red;">*</span></label>
+  <input type="text" id="empresaTecnico" name="empresaTecnico" required autocomplete="off" />
+
+  <label for="registroTecnico">CREA / Registro Profissional</label>
+  <input type="text" id="registroTecnico" name="registroTecnico" autocomplete="off" />
+
+  <div class="checklist-section">
+    <h2>Casa de Máquinas</h2>
+    <label class="check-item"><input type="checkbox" id="motor" name="motor" /> Motor de tração - Estado geral</label>
+    <label class="check-item"><input type="checkbox" id="freio" name="freio" /> Freio eletromagnético - Funcionamento</label>
+    <label class="check-item"><input type="checkbox" id="redutor" name="redutor" /> Redutor - Nível de óleo / ruídos</label>
+    <label class="check-item"><input type="checkbox" id="quadro" name="quadro" /> Quadro de comando - Limpeza / conexões</label>
+    <label class="check-item"><input type="checkbox" id="limitador" name="limitador" /> Limitador de velocidade - Teste</label>
+    <label class="check-item"><input type="checkbox" id="cabos" name="cabos" /> Cabos de tração - Desgaste / lubrificação</label>
+    <label class="check-item"><input type="checkbox" id="polias" name="polias" /> Polias - Estado / alinhamento</label>
+    <label class="check-item"><input type="checkbox" id="ventilacao" name="ventilacao" /> Ventilação da casa de máquinas</label>
+    <label class="check-item"><input type="checkbox" id="iluminacaoEmergencia" name="iluminacaoEmergencia" /> Iluminação de emergência</label>
+    <label class="check-item"><input type="checkbox" id="limpeza" name="limpeza" /> Limpeza geral do ambiente</label>
+  </div>
+
+  <div class="checklist-section">
+    <h2>Cabina</h2>
+    <label class="check-item"><input type="checkbox" id="portas" name="portas" /> Portas - Abertura / fechamento</label>
+    <label class="check-item"><input type="checkbox" id="botoes" name="botoes" /> Botões - Funcionamento</label>
+    <label class="check-item"><input type="checkbox" id="display" name="display" /> Display / Indicadores</label>
+    <label class="check-item"><input type="checkbox" id="iluminacaoInterna" name="iluminacaoInterna" /> Iluminação interna</label>
+    <label class="check-item"><input type="checkbox" id="ventilacaoCabina" name="ventilacaoCabina" /> Ventilação / Exaustor</label>
+    <label class="check-item"><input type="checkbox" id="interfone" name="interfone" /> Interfone / Alarme</label>
+    <label class="check-item"><input type="checkbox" id="espelho" name="espelho" /> Espelho / Acabamentos</label>
+    <label class="check-item"><input type="checkbox" id="piso" name="piso" /> Piso / Nivelamento</label>
+  </div>
+
+  <div class="checklist-section">
+    <h2>Poço</h2>
+    <label class="check-item"><input type="checkbox" id="amortecedores" name="amortecedores" /> Amortecedores - Estado</label>
+    <label class="check-item"><input type="checkbox" id="limpezaPoco" name="limpezaPoco" /> Limpeza do poço</label>
+    <label class="check-item"><input type="checkbox" id="drenagem" name="drenagem" /> Drenagem de água</label>
+    <label class="check-item"><input type="checkbox" id="iluminacaoPoco" name="iluminacaoPoco" /> Iluminação</label>
+    <label class="check-item"><input type="checkbox" id="cabosEletricos" name="cabosEletricos" /> Cabos elétricos - Fixação</label>
+  </div>
+
+  <label for="reparosExecutados" style="margin-top: 2rem;">Reparos Executados <span style="color:red;">*</span></label>
+  <textarea id="reparosExecutados" name="reparosExecutados" minlength="10" placeholder="Descreva os reparos realizados ..." required></textarea>
+
+  <label for="observacoes" style="margin-top: 1rem;">Observações / Recomendações</label>
+  <textarea id="observacoes" name="observacoes" placeholder="Observações importantes ..."></textarea>
+
+  <div class="signature-section">
+    <label class="signature-label">Assinatura do Técnico <span style="color:red;">*</span></label>
+    <canvas id="signature-pad"></canvas>
+    <div class="buttons" style="margin-top:10px;">
+      <button type="button" class="clear-button" id="clear-signature">Limpar Assinatura</button>
+      <button type="submit" id="generate-pdf">Gerar PDF</button>
     </div>
+  </div>
 
-    <div class="checklist-section">
-      <h2>Cabina</h2>
-      <label class="check-item">
-        <input type="checkbox" id="portas" name="portas" />
-        Portas - Abertura / fechamento
-      </label>
-      <label class="check-item">
-        <input type="checkbox" id="botoes" name="botoes" />
-        Botões - Funcionamento
-      </label>
-      <label class="check-item">
-        <input type="checkbox" id="display" name="display" />
-        Display / Indicadores
-      </label>
-      <label class="check-item">
-        <input type="checkbox" id="iluminacaoInterna" name="iluminacaoInterna" />
-        Iluminação interna
-      </label>
-      <label class="check-item">
-        <input type="checkbox" id="ventilacaoCabina" name="ventilacaoCabina" />
-        Ventilação / Exaustor
-      </label>
-      <label class="check-item">
-        <input type="checkbox" id="interfone" name="interfone" />
-        Interfone / Alarme
-      </label>
-      <label class="check-item">
-        <input type="checkbox" id="espelho" name="espelho" />
-        Espelho / Acabamentos
-      </label>
-      <label class="check-item">
-        <input type="checkbox" id="piso" name="piso" />
-        Piso / Nivelamento
-      </label>
-    </div>
-
-    <div class="checklist-section">
-      <h2>Poço</h2>
-      <label class="check-item">
-        <input type="checkbox" id="amortecedores" name="amortecedores" />
-        Amortecedores - Estado
-      </label>
-      <label class="check-item">
-        <input type="checkbox" id="limpezaPoco" name="limpezaPoco" />
-        Limpeza do poço
-      </label>
-      <label class="check-item">
-        <input type="checkbox" id="drenagem" name="drenagem" />
-        Drenagem de água
-      </label>
-      <label class="check-item">
-        <input type="checkbox" id="iluminacaoPoco" name="iluminacaoPoco" />
-        Iluminação
-      </label>
-      <label class="check-item">
-        <input type="checkbox" id="cabosEletricos" name="cabosEletricos" />
-        Cabos elétricos - Fixação
-      </label>
-    </div>
-
-    <label for="reparosExecutados" style="margin-top: 2rem;">Reparos Executados <span class="required">*</span></label>
-    <textarea id="reparosExecutados" name="reparosExecutados" minlength="10" placeholder="Descreva detalhadamente os reparos realizados" required></textarea>
-
-    <label for="observacoes" style="margin-top: 1rem;">Observações / Recomendações</label>
-    <textarea id="observacoes" name="observacoes" placeholder="Observações importantes ou recomendações"></textarea>
-
-    <div class="signature-section">
-      <div class="signature-label">Assinatura do Técnico <span class="required">*</span></div>
-      <canvas id="signature-pad"></canvas>
-      <div class="buttons" style="margin-top: 10px;">
-        <button type="button" class="clear-button" id="clear-signature">Limpar Assinatura</button>
-        <button type="submit" id="generate-pdf">Gerar PDF</button>
-      </div>
-    </div>
-  </form>
+</form>
 
 <script>
-// Configurar canvas para assinatura
-const canvas = document.getElementById('signature-pad');
-const ctx = canvas.getContext('2d');
-let isDrawing = false;
+  const canvas = document.getElementById('signature-pad');
+  const ctx = canvas.getContext('2d');
+  let drawing = false;
 
-function resizeCanvas() {
-  const ratio = window.devicePixelRatio || 1;
-  canvas.width = canvas.offsetWidth * ratio;
-  canvas.height = 200 * ratio;
-  canvas.style.height = '200px';
-  ctx.scale(ratio, ratio);
-
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
-  ctx.lineWidth = 3;
-  ctx.strokeStyle = '#333';
-}
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
-
-canvas.addEventListener('mousedown', e => {
-  isDrawing = true;
-  ctx.beginPath();
-  ctx.moveTo(e.offsetX, e.offsetY);
-});
-canvas.addEventListener('mousemove', e => {
-  if (!isDrawing) return;
-  ctx.lineTo(e.offsetX, e.offsetY);
-  ctx.stroke();
-});
-window.addEventListener('mouseup', () => {
-  isDrawing = false;
-});
-canvas.addEventListener('touchstart', e => {
-  e.preventDefault();
-  const rect = canvas.getBoundingClientRect();
-  const touch = e.touches[0];
-  ctx.beginPath();
-  ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
-  isDrawing = true;
-});
-canvas.addEventListener('touchmove', e => {
-  e.preventDefault();
-  if (!isDrawing) return;
-  const rect = canvas.getBoundingClientRect();
-  const touch = e.touches[0];
-  ctx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
-  ctx.stroke();
-});
-window.addEventListener('touchend', e => {
-  e.preventDefault();
-  isDrawing = false;
-});
-
-// Botão limpar assinatura
-document.getElementById('clear-signature').addEventListener('click', () => {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-});
-
-// Validação e geração de PDF
-document.getElementById('checklistForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-
-  // Validar assinatura (canvas não pode estar vazio)
-  const blankCanvas = document.createElement('canvas');
-  blankCanvas.width = canvas.width;
-  blankCanvas.height = canvas.height;
-  if (canvas.toDataURL() === blankCanvas.toDataURL()) {
-    alert('Por favor, assine o formulário antes de gerar o PDF.');
-    return;
+  function resizeCanvas() {
+    const ratio = window.devicePixelRatio || 1;
+    canvas.width = canvas.offsetWidth * ratio;
+    canvas.height = 200 * ratio;
+    canvas.style.height = '200px';
+    ctx.scale(ratio, ratio);
+    ctx.lineCap = 'round';
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = '#333';
   }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
 
-  // Verificar se formulário válido
-  const form = e.target;
-  if (!form.checkValidity()) {
-    alert('Por favor, preencha todos os campos obrigatórios corretamente.');
-    form.reportValidity();
-    return;
-  }
+  canvas.addEventListener('mousedown', e => {
+    drawing = true;
+    ctx.beginPath();
+    ctx.moveTo(e.offsetX, e.offsetY);
+  });
+  canvas.addEventListener('mousemove', e => {
+    if (!drawing) return;
+    ctx.lineTo(e.offsetX, e.offsetY);
+    ctx.stroke();
+  });
+  window.addEventListener('mouseup', () => drawing = false);
 
-  // Ler campos do formulário
-  const data = {
-    nomeCondominio: form.nomeCondominio.value,
-    endereco: form.endereco.value,
-    totalElevadores: form.totalElevadores.value,
-    elevadorInspecionado: form.elevadorInspecionado.value,
-    emailCondominio: form.emailCondominio.value,
-    telefoneResponsavel: form.telefoneResponsavel.value,
-    dataManutencao: form.dataManutencao.value,
-    tipoManutencao: form.tipoManutencao.value,
-    nomeTecnico: form.nomeTecnico.value,
-    empresaTecnico: form.empresaTecnico.value,
-    registroTecnico: form.registroTecnico.value || 'N/A',
-    reparosExecutados: form.reparosExecutados.value,
-    observacoes: form.observacoes.value || 'Nenhuma',
-    assinaturadataURL: canvas.toDataURL()
-  };
+  canvas.addEventListener('touchstart', e => {
+    e.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    const t = e.touches[0];
+    ctx.beginPath();
+    ctx.moveTo(t.clientX - rect.left, t.clientY - rect.top);
+    drawing = true;
+  });
+  canvas.addEventListener('touchmove', e => {
+    e.preventDefault();
+    if (!drawing) return;
+    const rect = canvas.getBoundingClientRect();
+    const t = e.touches[0];
+    ctx.lineTo(t.clientX - rect.left, t.clientY - rect.top);
+    ctx.stroke();
+  });
+  window.addEventListener('touchend', e => {
+    e.preventDefault();
+    drawing = false;
+  });
 
-  // Função para checkbox status
-  function checkboxStatus(id) {
-    const el = document.getElementById(id);
-    return el && el.checked ? '✅ OK' : '❌ NÃO OK';
-  }
-
-  // Criar conteúdo HTML para transformar em imagem para PDF
-  const htmlContent = `
-  <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
-    <h2 style="text-align: center;">Checklist Digital - Manutenção de Elevador</h2>
-    <hr/>
-    <h3>Dados do Condomínio</h3>
-    <p><strong>Nome:</strong> ${data.nomeCondominio}</p>
-    <p><strong>Endereço:</strong> ${data.endereco}</p>
-    <p><strong>Total elevadores:</strong> ${data.totalElevadores}</p>
-    <p><strong>Elevador Inspecionado:</strong> ${data.elevadorInspecionado}</p>
-    <p><strong>Email:</strong> ${data.emailCondominio}</p>
-    <p><strong>Telefone:</strong> ${data.telefoneResponsavel}</p>
-    <hr/>
-    <h3>Manutenção</h3>
-    <p><strong>Data:</strong> ${data.dataManutencao}</p>
-    <p><strong>Tipo:</strong> ${data.tipoManutencao}</p>
-    <hr/>
-    <h3>Técnico</h3>
-    <p><strong>Nome:</strong> ${data.nomeTecnico}</p>
-    <p><strong>Empresa:</strong> ${data.empresaTecnico}</p>
-    <p><strong>Registro:</strong> ${data.registroTecnico}</p>
-    <hr/>
-    <h3>Casa de Máquinas</h3>
-    <ul>
-      <li>Motor de tração: ${checkboxStatus('motor')}</li>
-      <li>Freio eletromagnético: ${checkboxStatus('freio')}</li>
-      <li>Redutor: ${checkboxStatus('redutor')}</li>
-      <li>Quadro de comando: ${checkboxStatus('quadro')}</li>
-      <li>Limitador de velocidade: ${checkboxStatus('limitador')}</li>
-      <li>Cabos de tração: ${checkboxStatus('cabos')}</li>
-      <li>Polias: ${checkboxStatus('polias')}</li>
-      <li>Ventilação: ${checkboxStatus('ventilacao')}</li>
-      <li>Iluminação de emergência: ${checkboxStatus('iluminacaoEmergencia')}</li>
-      <li>Limpeza geral: ${checkboxStatus('limpeza')}</li>
-    </ul>
-    <h3>Cabina</h3>
-    <ul>
-      <li>Portas: ${checkboxStatus('portas')}</li>
-      <li>Botões: ${checkboxStatus('botoes')}</li>
-      <li>Display / Indicadores: ${checkboxStatus('display')}</li>
-      <li>Iluminação interna: ${checkboxStatus('iluminacaoInterna')}</li>
-      <li>Ventilação / Exaustor: ${checkboxStatus('ventilacaoCabina')}</li>
-      <li>Interfone / Alarme: ${checkboxStatus('interfone')}</li>
-      <li>Espelho / Acabamentos: ${checkboxStatus('espelho')}</li>
-      <li>Piso / Nivelamento: ${checkboxStatus('piso')}</li>
-    </ul>
-    <h3>Poço</h3>
-    <ul>
-      <li>Amortecedores: ${checkboxStatus('amortecedores')}</li>
-      <li>Limpeza do poço: ${checkboxStatus('limpezaPoco')}</li>
-      <li>Drenagem de água: ${checkboxStatus('drenagem')}</li>
-      <li>Iluminação: ${checkboxStatus('iluminacaoPoco')}</li>
-      <li>Cabos elétricos: ${checkboxStatus('cabosEletricos')}</li>
-    </ul>
-    <h3>Reparos Executados</h3>
-    <p>${data.reparosExecutados.replace(/\n/g, '<br>')}</p>
-    <h3>Observações / Recomendações</h3>
-    <p>${data.observacoes.replace(/\n/g, '<br>')}</p>
-    <h3>Assinatura do Técnico</h3>
-    <img src="${data.assinaturadataURL}" alt="Assinatura" style="width: 300px; border: 1px solid #aaa; border-radius: 4px;" />
-    <hr />
-    <p style="font-size: 12px; text-align: center; color: #777;">Gerado pelo Lift Control - ${new Date().toLocaleString()}</p>
-  </div>`;
-
-  // Criar div temporária para renderizar o conteúdo
-  const tempDiv = document.createElement('div');
-  tempDiv.style.width = '700px';
-  tempDiv.style.position = 'absolute';
-  tempDiv.style.left = '-9999px';
-  tempDiv.innerHTML = htmlContent;
-  document.body.appendChild(tempDiv);
-
-  // Renderizar para imagem que será usada no PDF
-  html2canvas(tempDiv, { scale: 2, useCORS: true }).then(canvasImg => {
-    const imgDataUrl = canvasImg.toDataURL('image/png');
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF('p', 'pt', 'a4');
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = (canvasImg.height * pdfWidth) / canvasImg.width;
-
-    pdf.addImage(imgDataUrl, 'PNG', 10, 10, pdfWidth - 20, pdfHeight);
-    const nomeArquivo = `Checklist_${data.nomeCondominio.replace(/\s+/g, '')}_${data.elevadorInspecionado.replace(/\s+/g,'')}.pdf`;
-    pdf.save(nomeArquivo);
-
-    document.body.removeChild(tempDiv);
-    alert('PDF gerado com sucesso! Agora você pode enviar para o cliente.');
-
-    // Resetar formulário e limpar assinatura
-    form.reset();
+  document.getElementById('clear-signature').addEventListener('click', () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
   });
-});
-</script>
-</body>
-</html>
 
+  document.getElementById('checklistForm').addEventListener('submit', async e => {
+    e.preventDefault();
+
+    // Validação assinatura preenchida
+    const blankCanvas = document.createElement('canvas');
+    blankCanvas.width = canvas.width;
+    blankCanvas.height = canvas.height;
+    if(canvas.toDataURL()===blankCanvas.toDataURL()){
+      alert('Por favor, assine o checklist antes de gerar o PDF.');
+      return;
+    }
+
+    // Validação padrão dos campos obrigatórios
+    if(!e.target.checkValidity()){
+      alert('Por favor, preencha todos os campos obrigatórios corretamente.');
+      e.target.reportValidity();
+      return;
+    }
+
+    // Abaixo você pode inserir o código para gerar PDF ou enviar dados conforme necessário
+    alert('Checklist preenchido com sucesso! (Esta é uma simulação)');
+  });
 </script>
+
 </body>
 </html>
