@@ -142,6 +142,7 @@
 <form id="checklistForm" novalidate>
   <h1>Checklist Digital – Lift Control</h1>
 
+  <!-- Os campos do checklist começam aqui -->
   <label for="nomeCondominio">Nome do Condomínio <span class="required">*</span></label>
   <input id="nomeCondominio" name="nomeCondominio" type="text" required placeholder="Ex: Edifício Solaris" autocomplete="off" />
 
@@ -223,7 +224,7 @@
   </div>
 
   <label for="reparosExecutados" style="margin-top: 30px;">Reparos Executados <span class="required">*</span></label>
-  <textarea id="reparosExecutados" name="reparosExecutados" minlength="10" required placeholder="Descreva detalhadamente os reparos..."></textarea>
+  <textarea id="reparosExecutados" name="reparosExecutados" minlength="10" placeholder="Descreva detalhadamente os reparos..." required></textarea>
 
   <label for="observacoes" style="margin-top: 20px;">Observações / Recomendações</label>
   <textarea id="observacoes" name="observacoes" placeholder="Observações importantes ou recomendações"></textarea>
@@ -233,6 +234,8 @@
   </div>
 </form>
 
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script>
   document.getElementById('checklistForm').addEventListener('submit', async e => {
     e.preventDefault();
@@ -249,7 +252,9 @@
         dados[key] = value;
       });
 
-      ['motor','freio','redutor','quadro','limitador','cabos','polias','ventilacao','iluminacaoEmergencia','limpeza','portas','botoes','display','iluminacaoInterna','ventilacaoCabina','interfone','espelho','piso','amortecedores','limpezaPoco','drenagem','iluminacaoPoco','cabosEletricos'].forEach(id => {
+      ['motor','freio','redutor','quadro','limitador','cabos','polias','ventilacao','iluminacaoEmergencia','limpeza',
+      'portas','botoes','display','iluminacaoInterna','ventilacaoCabina','interfone','espelho','piso',
+      'amortecedores','limpezaPoco','drenagem','iluminacaoPoco','cabosEletricos'].forEach(id => {
         const el = e.target.elements[id];
         dados[id] = el && el.checked ? "Ok" : "Pendente";
       });
@@ -258,7 +263,7 @@
         <div style="font-family: Arial, sans-serif; padding: 20px; color: #253858; font-size: 18pt; line-height: 1.6;">
           <h2 style="text-align:center; font-size: 22pt;">Checklist Digital – Lift Control</h2>
           <hr />
-          <h3 style="font-size:20pt;">Dados do Condomínio</h3>
+          <h3 style="font-size: 20pt;">Dados do Condomínio</h3>
           <p><strong>Nome:</strong> ${dados.nomeCondominio}</p>
           <p><strong>Endereço:</strong> ${dados.endereco}</p>
           <p><strong>Total de Elevadores:</strong> ${dados.totalElevadores}</p>
@@ -266,14 +271,14 @@
           <p><strong>Email:</strong> ${dados.emailCondominio}</p>
           <p><strong>Telefone:</strong> ${dados.telefoneResponsavel}</p>
           <hr />
-          <h3 style="font-size:16pt;">Manutenção</h3>
+          <h3 style="font-size: 20pt;">Manutenção</h3>
           <p><strong>Data:</strong> ${dados.dataManutencao}</p>
           <p><strong>Tipo:</strong> ${dados.tipoManutencao}</p>
           <p><strong>Técnico:</strong> ${dados.nomeTecnico}</p>
           <p><strong>Empresa:</strong> ${dados.empresaTecnico}</p>
           <p><strong>Registro:</strong> ${dados.registroTecnico || 'N/A'}</p>
           <hr />
-          <h3 style="font-size:16pt;">Casa de Máquinas</h3>
+          <h3 style="font-size: 20pt;">Casa de Máquinas</h3>
           <ul>
             <li>Motor de tração: ${dados.motor}</li>
             <li>Freio eletromagnético: ${dados.freio}</li>
@@ -286,7 +291,7 @@
             <li>Iluminação de emergência: ${dados.iluminacaoEmergencia}</li>
             <li>Limpeza geral: ${dados.limpeza}</li>
           </ul>
-          <h3 style="font-size:16pt;">Cabina</h3>
+          <h3 style="font-size: 20pt;">Cabina</h3>
           <ul>
             <li>Portas: ${dados.portas}</li>
             <li>Botões: ${dados.botoes}</li>
@@ -297,7 +302,7 @@
             <li>Espelho / Acabamentos: ${dados.espelho}</li>
             <li>Piso / Nivelamento: ${dados.piso}</li>
           </ul>
-          <h3 style="font-size:16pt;">Poço</h3>
+          <h3 style="font-size: 20pt;">Poço</h3>
           <ul>
             <li>Amortecedores: ${dados.amortecedores}</li>
             <li>Limpeza do poço: ${dados.limpezaPoco}</li>
@@ -306,27 +311,28 @@
             <li>Cabos elétricos: ${dados.cabosEletricos}</li>
           </ul>
           <hr />
-          <h3 style="font-size:16pt;">Reparos Executados</h3>
-          <p style="font-size:14pt;">${dados.reparosExecutados}</p>
-          <h3 style="font-size:16pt;">Observações / Recomendações</h3>
-          <p style="font-size:14pt;">${dados.observacoes || ''}</p>
+          <h3 style="font-size: 20pt;">Reparos Executados</h3>
+          <p style="font-size: 18pt;">${dados.reparosExecutados}</p>
+          <h3 style="font-size: 20pt;">Observações / Recomendações</h3>
+          <p style="font-size: 18pt;">${dados.observacoes || ''}</p>
           <hr/>
-          <p style="font-size:10pt; color:#666; text-align:center;">Gerado por Lift Control - 2025</p>
+          <p style="font-size:14pt; color:#666; text-align:center;">Gerado por Lift Control - 2025</p>
         </div>`;
 
       const container = document.createElement('div');
+      container.style.width = '900px';
       container.style.padding = "20px";
       container.style.background = "white";
       container.innerHTML = content;
       document.body.appendChild(container);
 
-      html2canvas(container, { scale: 3 }).then(canvasImg => {
+      html2canvas(container, { scale: 3, scrollY: -window.scrollY }).then(canvasImg => {
         const imgData = canvasImg.toDataURL('image/png');
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF('p', 'pt', 'a4');
-        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfWidth = pdf.internal.pageSize.getWidth() - 40; // margens de 20pt cada lado
         const pdfHeight = (canvasImg.height * pdfWidth) / canvasImg.width;
-        pdf.addImage(imgData, 'PNG', 10, 10, pdfWidth - 20, pdfHeight);
+        pdf.addImage(imgData, 'PNG', 20, 20, pdfWidth, pdfHeight);
         pdf.save(`Checklist_${dados.nomeCondominio.replace(/\s+/g,"")}_${dados.elevadorInspecionado.replace(/\s+/g,"")}.pdf`);
         document.body.removeChild(container);
       });
@@ -335,5 +341,6 @@
     }
   });
 </script>
+
 </body>
 </html>
