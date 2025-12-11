@@ -1,195 +1,288 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Demo Checklist - Elevador</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    background: #eef2ff;
-    padding: 10px;
-  }
-  .container {
-    max-width: 800px;
-    margin: 0 auto;
-    background: white;
-    padding: 25px 35px;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  }
-  h1 {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #444;
-  }
-  label {
-    display: block;
-    margin-top: 12px;
-    font-weight: bold;
-  }
-  input[type="text"], select, textarea {
-    margin-top: 5px;
-    width: 100%;
-    padding: 9px;
-    font-size: 14px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-  }
-  textarea {
-    resize: vertical;
-    min-height: 70px;
-  }
-  .checklist-section {
-    margin-top: 20px;
-  }
-  .check-item {
-    display: flex;
-    align-items: center;
-    margin: 6px 0;
-  }
-  .check-item input {
-    margin-right: 8px;
-    width: 18px;
-    height: 18px;
-  }
-  .signature-pad {
-    border: 2px dashed #667eea;
-    height: 180px;
-    margin-top: 15px;
-    border-radius: 8px;
-    cursor: crosshair;
-    background: #f9fbff;
-  }
-  .buttons {
-    margin-top: 25px;
-    text-align: center;
-  }
-  button {
-    background: #667eea;
-    color: white;
-    border: none;
-    padding: 13px 35px;
-    font-weight: bold;
-    font-size: 16px;
-    border-radius: 50px;
-    cursor: pointer;
-    margin: 0 10px;
-    transition: background-color 0.3s ease;
-  }
-  button:hover {
-    background: #764ba2;
-  }
-  button:disabled {
-    background: #999;
-    cursor: not-allowed;
-  }
-  button.clear-button {
-    background: #f44336;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Demo Checklist Digital de Manutenção - Elevador</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f9fafb;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #2c3e50;
+    }
+    form {
+      max-width: 720px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-top: 18px;
+      font-weight: 600;
+      font-size: 15px;
+      color: #34495e;
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="number"],
+    input[type="date"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px 15px;
+      margin-top: 6px;
+      border: 1.5px solid #bdc3c7;
+      border-radius: 8px;
+      font-size: 15px;
+      transition: border-color 0.3s ease;
+    }
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="number"]:focus,
+    input[type="date"]:focus,
+    select:focus,
+    textarea:focus {
+      border-color: #3498db;
+      outline: none;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    .checklist-section {
+      margin-top: 25px;
+    }
+    .checklist-section h2 {
+      margin-bottom: 15px;
+      color: #2c3e50;
+      border-bottom: 2px solid #3498db;
+      padding-bottom: 5px;
+    }
+    .check-item {
+      display: flex;
+      align-items: center;
+      background: #ecf0f1;
+      padding: 10px 15px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: background-color 0.25s ease;
+      user-select: none;
+    }
+    .check-item:hover {
+      background: #d6eaf8;
+    }
+    .check-item input[type="checkbox"] {
+      width: 25px;
+      height: 25px;
+      margin-right: 15px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .signature-section {
+      margin-top: 30px;
+    }
+    .signature-label {
+      font-weight: 600;
+      font-size: 15px;
+      color: #34495e;
+      margin-bottom: 6px;
+    }
+    #signature-pad {
+      border: 2px dashed #3498db;
+      border-radius: 12px;
+      width: 100%;
+      height: 200px;
+      background-color: #f7fbff;
+      cursor: crosshair;
+    }
+    .buttons {
+      margin-top: 30px;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      flex-wrap: wrap;
+    }
+    button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 14px 45px;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+    button:hover {
+      background-color: #2980b9;
+      transform: translateY(-3px);
+    }
+    button:disabled {
+      background-color: #aaa;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+    button.clear-button {
+      background-color: #e74c3c;
+    }
+    button.clear-button:hover {
+      background-color: #c0392b;
+    }
+    @media (max-width: 480px) {
+      form {
+        padding: 20px 15px;
+      }
+      button {
+        width: 100%;
+        padding: 15px 0;
+        font-size: 18px;
+      }
+      .buttons {
+        flex-direction: column;
+        gap: 15px;
+      }
+    }
+    .info {
+      text-align: center;
+      margin-top: 18px;
+      color: #555;
+      font-style: italic;
+    }
+  </style>
 </head>
 <body>
-<div class="container">
-  <h1>Demo Checklist de Elevador</h1>
-  <p style="text-align:center; color:#666;">Esta versão é apenas para testes, não gera PDF.</p>
+  <h1>Demo Checklist Digital de Manutenção - Elevador</h1>
+  <form id="demoForm" novalidate>
+    <label for="nomeCondominio">Nome do Condomínio</label>
+    <input type="text" id="nomeCondominio" name="nomeCondominio" placeholder="Ex: Edifício Solar das Palmeiras" autocomplete="off" />
 
-<form id="demoForm">
+    <label for="endereco">Endereço Completo</label>
+    <input type="text" id="endereco" name="endereco" autocomplete="off" />
 
-  <label>Nome do Condomínio</label>
-  <input type="text" id="demoNome" placeholder="Teste Condominio" />
+    <label for="totalElevadores">Total de Elevadores no Prédio</label>
+    <input type="number" id="totalElevadores" name="totalElevadores" min="1" autocomplete="off" />
 
-  <label>Elevador Inspecionado</label>
-  <select id="demoElevador">
-    <option>Social</option>
-    <option>Serviço</option>
-    <option>Elevador 1</option>
-  </select>
+    <label for="elevadorInspecionado">Elevador Inspecionado</label>
+    <select id="elevadorInspecionado" name="elevadorInspecionado">
+      <option value="" disabled selected>Selecione...</option>
+      <option value="Social">Social</option>
+      <option value="Serviço">Serviço</option>
+      <option value="Elevador 1">Elevador 1</option>
+      <option value="Elevador 2">Elevador 2</option>
+      <option value="Elevador 3">Elevador 3</option>
+    </select>
 
-  <div class="checklist-section" style="margin-top:20px;">
-    <h3>Checklist Simplificado</h3>
-    <div class="check-item"><input type="checkbox" /> Motor OK</div>
-    <div class="check-item"><input type="checkbox" /> Freio OK</div>
-    <div class="check-item"><input type="checkbox" /> Portas OK</div>
-    <div class="check-item"><input type="checkbox" /> Iluminação OK</div>
+    <label for="emailCondominio">Email do Condomínio</label>
+    <input type="email" id="emailCondominio" name="emailCondominio" placeholder="contato@condominio.com" autocomplete="off" />
+
+    <label for="telefoneResponsavel">Telefone do Responsável</label>
+    <input type="text" id="telefoneResponsavel" name="telefoneResponsavel" placeholder="(13) 99999-9999" autocomplete="off" />
+
+    <label for="dataManutencao">Data da Manutenção</label>
+    <input type="date" id="dataManutencao" name="dataManutencao" />
+
+    <label for="tipoManutencao">Tipo de Manutenção</label>
+    <select id="tipoManutencao" name="tipoManutencao">
+      <option value="" disabled selected>Selecione...</option>
+      <option>Preventiva</option>
+      <option>Corretiva</option>
+      <option>Emergencial</option>
+      <option>Inspeção</option>
+    </select>
+
+    <label for="nomeTecnico">Nome Completo do Técnico</label>
+    <input type="text" id="nomeTecnico" name="nomeTecnico" autocomplete="off" />
+
+    <label for="empresaTecnico">Empresa do Técnico</label>
+    <input type="text" id="empresaTecnico" name="empresaTecnico" autocomplete="off" />
+
+    <label>Assinatura do Técnico</label>
+    <canvas id="signature-pad"></canvas>
+
+    <div class="buttons">
+      <button type="button" class="clear-button" id="clear-signature">Limpar Assinatura</button>
+      <button type="submit" id="submit-demo">Enviar (Simulado)</button>
+    </div>
+  </form>
+  <div class="info">
+    <p>Esta é uma demonstração. Nenhum dado será enviado ou salvo.</p>
   </div>
 
-  <label>Reparos Executados</label>
-  <textarea placeholder="Descreva reparos"></textarea>
+  <script>
+    const canvas = document.getElementById('signature-pad');
+    const ctx = canvas.getContext('2d');
+    let isDrawing = false;
 
-  <label>Assinatura do Técnico</label>
-  <canvas id="demoSignature" class="signature-pad"></canvas>
+    function resizeCanvas() {
+      const ratio = window.devicePixelRatio || 1;
+      canvas.width = canvas.offsetWidth * ratio;
+      canvas.height = 200 * ratio;
+      canvas.style.height = '200px';
+      ctx.scale(ratio, ratio);
 
-  <div class="buttons">
-    <button type="button" id="clearDemoSignature" class="clear-button">Limpar Assinatura</button>
-    <button type="submit" id="sendDemo">Enviar (simulado)</button>
-  </div>
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = '#333';
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
 
-</form>
-</div>
+    canvas.addEventListener('mousedown', e => {
+      isDrawing = true;
+      ctx.beginPath();
+      ctx.moveTo(e.offsetX, e.offsetY);
+    });
+    canvas.addEventListener('mousemove', e => {
+      if (!isDrawing) return;
+      ctx.lineTo(e.offsetX, e.offsetY);
+      ctx.stroke();
+    });
+    window.addEventListener('mouseup', () => isDrawing = false);
 
-<script>
-  const canvas = document.getElementById("demoSignature");
-  const ctx = canvas.getContext("2d");
-  let drawing = false;
+    canvas.addEventListener('touchstart', e => {
+      e.preventDefault();
+      const rect = canvas.getBoundingClientRect();
+      const touch = e.touches[0];
+      ctx.beginPath();
+      ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
+      isDrawing = true;
+    });
+    canvas.addEventListener('touchmove', e => {
+      e.preventDefault();
+      if (!isDrawing) return;
+      const rect = canvas.getBoundingClientRect();
+      const touch = e.touches[0];
+      ctx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
+      ctx.stroke();
+    });
+    window.addEventListener('touchend', e => {
+      e.preventDefault();
+      isDrawing = false;
+    });
 
-  function resize() {
-    const ratio = window.devicePixelRatio || 1;
-    canvas.width = canvas.offsetWidth * ratio;
-    canvas.height = 180 * ratio;
-    canvas.style.height = "180px";
-    ctx.scale(ratio, ratio);
-    ctx.lineWidth = 2;
-    ctx.lineCap = "round";
-    ctx.strokeStyle = "#000";
-  }
-  resize();
-  window.addEventListener("resize", resize);
+    document.getElementById('clear-signature').addEventListener('click', () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    });
 
-  canvas.addEventListener("mousedown", e => {
-    drawing = true;
-    ctx.beginPath();
-    ctx.moveTo(e.offsetX, e.offsetY);
-  });
-  canvas.addEventListener("mousemove", e => {
-    if (!drawing) return;
-    ctx.lineTo(e.offsetX, e.offsetY);
-    ctx.stroke();
-  });
-  window.addEventListener("mouseup", () => drawing = false);
-
-  // touch support
-  canvas.addEventListener("touchstart", e => {
-    e.preventDefault();
-    const rect = canvas.getBoundingClientRect();
-    const t = e.touches[0];
-    ctx.beginPath();
-    ctx.moveTo(t.clientX - rect.left, t.clientY - rect.top);
-    drawing = true;
-  });
-  canvas.addEventListener("touchmove", e => {
-    e.preventDefault();
-    if(!drawing) return;
-    const rect = canvas.getBoundingClientRect();
-    const t = e.touches[0];
-    ctx.lineTo(t.clientX - rect.left, t.clientY - rect.top);
-    ctx.stroke();
-  });
-  window.addEventListener("touchend", e => {
-    e.preventDefault();
-    drawing = false;
-  });
-
-  // limpar assinatura
-  document.getElementById("clearDemoSignature").onclick = () => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-  };
-
-  // formulário simulado
-  document.getElementById("demoForm").onsubmit = e => {
-    e.preventDefault();
-    alert("Este é apenas um formulário simulado para testes.\nNenhum dado foi enviado.");
-  };
-</script>
+    document.getElementById('demoForm').addEventListener('submit', e => {
+      e.preventDefault();
+      alert('Este é um formulário de demonstração.\nNenhum dado foi enviado.');
+    });
+  </script>
 </body>
 </html>
