@@ -1,295 +1,458 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Checklist Digital - Elevadores</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Checklist Digital – Lift Control</title>
 
-  <!-- Bootstrap 5 CSS CDN -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-  <style>
-    body {
-      background: #121212;
-      color: #f8f9fa;
-      padding: 20px;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+<style>
+  /* Reset e base */
+  *{
+    box-sizing: border-box;
+  }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0; padding: 30px;
+    background-color: #f9fafb;
+    color: #253858; /* cinza azulado escuro para texto */
+  }
+  form {
+    max-width: 820px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    border-radius: 14px;
+    padding: 45px 50px;
+    box-shadow: 0 10px 30px rgb(37 56 88 / 0.1);
+  }
+  h1 {
+    color: #1a3e57; /* azul petróleo escuro */
+    text-align: center;
+    padding-bottom: 15px;
+    border-bottom: 3px solid #236691; /* azul petróleo */
+    margin-bottom: 35px;
+    font-weight: 700;
+  }
+  label {
+    display: block;
+    margin-top: 25px;
+    font-weight: 600;
+    font-size: 16px;
+  }
+  input[type=text],
+  input[type=email],
+  input[type=number],
+  input[type=date],
+  select,
+  textarea {
+    width: 100%;
+    padding: 14px 18px;
+    font-size: 16px;
+    border: 1.5px solid #ccd7e0;
+    border-radius: 12px;
+    margin-top: 8px;
+    color: #253858;
+    font-weight: 500;
+    transition: border-color 0.3s ease;
+  }
+  input[type=text]:focus,
+  input[type=email]:focus,
+  input[type=number]:focus,
+  input[type=date]:focus,
+  select:focus,
+  textarea:focus {
+    border-color: #236691;
+    outline: none;
+  }
+  textarea {
+    min-height: 110px;
+    resize: vertical;
+  }
+  /* Checkboxes */
+  .checklist-section {
+    margin-top: 40px;
+  }
+  .checklist-section h2 {
+    color: #236691;
+    border-bottom: 2px solid #236691;
+    padding-bottom: 10px;
+    margin-bottom: 30px;
+    font-weight: 700;
+  }
+  label.check-item {
+    display: flex;
+    align-items: center;
+    padding: 14px 18px;
+    background-color: #f1f5f9;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    cursor: pointer;
+    user-select: none;
+    font-weight: 600;
+    font-size: 15px;
+    color: #1a3e57;
+  }
+  label.check-item:hover {
+    background-color: #dbe9fb;
+  }
+  label.check-item input[type=checkbox] {
+    margin-right: 20px;
+    width: 26px;
+    height: 26px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  /* Assinatura */
+  .signature-section {
+    margin-top: 50px;
+  }
+  label.signature-label {
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 12px;
+    display: block;
+    color: #1a3e57;
+  }
+  #signature-pad {
+    border: 2px dashed #236691;
+    border-radius: 18px;
+    width: 100%;
+    height: 220px;
+    cursor: crosshair;
+    background: #fefefe;
+  }
+  /* botões */
+  .buttons {
+    margin-top: 35px;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+  }
+  button {
+    padding: 15px 50px;
+    font-size: 18px;
+    font-weight: 700;
+    border-radius: 50px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  button.clear-button {
+    background-color: #eb5757;
+    color: white;
+    box-shadow: 0 5px 15px rgb(235 87 87 / 0.6);
+  }
+  button.clear-button:hover {
+    background-color: #b63737;
+  }
+  button.submit-button {
+    background-color: #236691;
+    color: white;
+    box-shadow: 0 5px 15px rgb(35 102 145 / 0.7);
+  }
+  button.submit-button:hover {
+    background-color: #184a6e;
+  }
+  button:disabled {
+    background-color: #a9bbc9;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+  /* Mobile responsiveness */
+  @media screen and (max-width: 600px){
+    form {
+      padding: 25px 20px;
     }
-    .container {
-      background: #1f1f1f;
-      padding: 30px;
-      border-radius: 15px;
-      max-width: 900px;
-      margin: 0 auto;
-      box-shadow: 0 0 20px #007bff88;
+    label.check-item {
+      font-size: 14px;
+      padding: 12px 12px;
     }
-    h1 {
-      text-align: center;
-      color: #0d6efd;
-      margin-bottom: 25px;
-      font-weight: 700;
-    }
-    label.form-check-label {
-      cursor: pointer;
-      user-select: none;
-    }
-    textarea.form-control {
-      min-height: 100px;
-    }
-    #signature-pad {
-      border: 2px dashed #0d6efd;
-      border-radius: 12px;
-      background: #121212;
+    button {
       width: 100%;
-      height: 180px;
-      cursor: crosshair;
+      padding: 16px 0;
+      font-size: 20px;
     }
-    .btn-clear {
-      background-color: #dc3545;
-      border-radius: 50px;
-      padding: 10px 40px;
-      font-weight: bold;
-      margin-right: 15px;
-      border: none;
+    .buttons {
+      flex-direction: column;
+      gap: 20px;
+      align-items: stretch;
     }
-    .btn-clear:hover {
-      background-color: #bb2d3b;
-    }
-    .btn-submit {
-      background-color: #0d6efd;
-      border-radius: 50px;
-      padding: 10px 50px;
-      font-weight: bold;
-      border: none;
-      color: white;
-    }
-    .btn-submit:hover {
-      background-color: #0b5ed7;
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
-  <div class="container">
-    <h1>Checklist Digital de Manutenção - Elevadores</h1>
+<form id="checklistForm" novalidate>
+  <h1>Checklist Digital – Lift Control</h1>
 
-    <form id="checklistForm" novalidate>
+  <label for="nomeCondominio">Nome do Condomínio <span class="required">*</span></label>
+  <input id="nomeCondominio" name="nomeCondominio" type="text" required placeholder="Ex: Edifício Solaris" autocomplete="off" />
 
-      <div class="mb-3">
-        <label for="nomeCondominio" class="form-label">Nome do Condomínio <span class="text-danger">*</span></label>
-        <input type="text" id="nomeCondominio" class="form-control" placeholder="Ex: Edifício Solar das Palmeiras" required />
-        <div class="invalid-feedback">Por favor, preencha o nome do condomínio.</div>
-      </div>
+  <label for="endereco">Endereço Completo <span class="required">*</span></label>
+  <input id="endereco" name="endereco" type="text" required autocomplete="off" />
 
-      <div class="mb-3">
-        <label for="endereco" class="form-label">Endereço Completo <span class="text-danger">*</span></label>
-        <input type="text" id="endereco" class="form-control" required />
-        <div class="invalid-feedback">Por favor, preencha o endereço.</div>
-      </div>
+  <label for="totalElevadores">Total de Elevadores no Prédio <span class="required">*</span></label>
+  <input id="totalElevadores" name="totalElevadores" type="number" min="1" required autocomplete="off" />
 
-      <div class="mb-3">
-        <label for="totalElevadores" class="form-label">Total de Elevadores no Prédio <span class="text-danger">*</span></label>
-        <input type="number" id="totalElevadores" class="form-control" min="1" required />
-        <div class="invalid-feedback">Por favor, informe o número de elevadores.</div>
-      </div>
+  <label for="elevadorInspecionado">Elevador Inspecionado <span class="required">*</span></label>
+  <select id="elevadorInspecionado" name="elevadorInspecionado" required>
+    <option value="" disabled selected>Selecione...</option>
+    <option>Social</option>
+    <option>Serviço</option>
+    <option>Elevador 1</option>
+    <option>Elevador 2</option>
+    <option>Elevador 3</option>
+  </select>
 
-      <div class="mb-3">
-        <label for="elevadorInspecionado" class="form-label">Elevador Inspecionado <span class="text-danger">*</span></label>
-        <select id="elevadorInspecionado" class="form-select" required>
-          <option value="" selected disabled>Selecione...</option>
-          <option>Social</option>
-          <option>Serviço</option>
-          <option>Elevador 1</option>
-          <option>Elevador 2</option>
-          <option>Elevador 3</option>
-        </select>
-        <div class="invalid-feedback">Por favor, selecione o elevador inspecionado.</div>
-      </div>
+  <label for="emailCondominio">Email do Condomínio <span class="required">*</span></label>
+  <input id="emailCondominio" name="emailCondominio" type="email" required placeholder="contato@condominio.com" autocomplete="off" />
 
-      <div class="mb-3">
-        <label for="emailCondominio" class="form-label">Email do Condomínio <span class="text-danger">*</span></label>
-        <input type="email" id="emailCondominio" class="form-control" placeholder="contato@condominio.com" required />
-        <div class="invalid-feedback">Informe um email válido.</div>
-      </div>
+  <label for="telefoneResponsavel">Telefone do Responsável <span class="required">*</span></label>
+  <input id="telefoneResponsavel" name="telefoneResponsavel" type="text" placeholder="(13) 99999-9999" pattern="^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$" title="Informe telefone no formato (13) 99999-9999" required autocomplete="off" />
 
-      <div class="mb-3">
-        <label for="telefoneResponsavel" class="form-label">Telefone do Responsável <span class="text-danger">*</span></label>
-        <input type="tel" id="telefoneResponsavel" class="form-control" placeholder="(13) 99999-9999" required pattern="^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$" />
-        <div class="invalid-feedback">Informe telefone no formato (13) 99999-9999.</div>
-      </div>
+  <label for="dataManutencao">Data da Manutenção <span class="required">*</span></label>
+  <input id="dataManutencao" name="dataManutencao" type="date" required />
 
-      <div class="mb-3">
-        <label for="dataManutencao" class="form-label">Data da Manutenção <span class="text-danger">*</span></label>
-        <input type="date" id="dataManutencao" class="form-control" required />
-        <div class="invalid-feedback">Por favor, selecione a data.</div>
-      </div>
+  <label for="tipoManutencao">Tipo de Manutenção <span class="required">*</span></label>
+  <select id="tipoManutencao" name="tipoManutencao" required>
+    <option value="" disabled selected>Selecione...</option>
+    <option>Preventiva</option>
+    <option>Corretiva</option>
+    <option>Emergencial</option>
+  </select>
 
-      <div class="mb-3">
-        <label for="tipoManutencao" class="form-label">Tipo de Manutenção <span class="text-danger">*</span></label>
-        <select id="tipoManutencao" class="form-select" required>
-          <option value="" selected disabled>Selecione...</option>
-          <option>Preventiva</option>
-          <option>Corretiva</option>
-          <option>Emergencial</option>
-          <option>Inspeção</option>
-        </select>
-        <div class="invalid-feedback">Por favor, selecione o tipo de manutenção.</div>
-      </div>
+  <label for="nomeTecnico">Nome Completo do Técnico <span class="required">*</span></label>
+  <input id="nomeTecnico" name="nomeTecnico" type="text" placeholder="Nome completo" required autocomplete="off" />
 
-      <div class="mb-3">
-        <label for="nomeTecnico" class="form-label">Nome Completo do Técnico <span class="text-danger">*</span></label>
-        <input type="text" id="nomeTecnico" class="form-control" placeholder="Nome completo" required />
-        <div class="invalid-feedback">Informe o nome do técnico.</div>
-      </div>
+  <label for="empresaTecnico">Empresa do Técnico <span class="required">*</span></label>
+  <input id="empresaTecnico" name="empresaTecnico" type="text" required autocomplete="off" />
 
-      <div class="mb-3">
-        <label for="empresaTecnico" class="form-label">Empresa do Técnico <span class="text-danger">*</span></label>
-        <input type="text" id="empresaTecnico" class="form-control" required />
-        <div class="invalid-feedback">Informe a empresa do técnico.</div>
-      </div>
+  <label for="registroTecnico">CREA / Registro Profissional</label>
+  <input id="registroTecnico" name="registroTecnico" type="text" autocomplete="off" />
 
-      <div class="mb-3">
-        <label for="registroTecnico" class="form-label">CREA / Registro Profissional</label>
-        <input type="text" id="registroTecnico" class="form-control" />
-      </div>
-
-      <h3 class="mt-4 text-primary">Casa de Máquinas</h3>
-      <div class="form-check">
-        <input class="form-check-input" type="checkbox" id="motor" />
-        <label class="form-check-label" for="motor">Motor de tração - Estado geral</label>
-      </div>
-      <div class="form-check">
-        <input class="form-check-input" type="checkbox" id="freio" />
-        <label class="form-check-label" for="freio">Freio eletromagnético - Funcionamento</label>
-      </div>
-      <div class="form-check">
-        <input class="form-check-input" type="checkbox" id="redutor" />
-        <label class="form-check-label" for="redutor">Redutor - Nível de óleo / ruídos</label>
-      </div>
-      <div class="form-check">
-        <input class="form-check-input" type="checkbox" id="quadro" />
-        <label class="form-check-label" for="quadro">Quadro de comando - Limpeza / conexões</label>
-      </div>
-      <!-- Continue as checkboxes conforme necessário -->
-
-      <div class="mb-3 mt-4">
-        <label for="reparosExecutados" class="form-label">Reparos Executados <span class="text-danger">*</span></label>
-        <textarea id="reparosExecutados" class="form-control" minlength="10" required placeholder="Descreva os reparos realizados"></textarea>
-        <div class="invalid-feedback">Informe os reparos executados.</div>
-      </div>
-
-      <div class="mb-3">
-        <label for="observacoes" class="form-label">Observações / Recomendações</label>
-        <textarea id="observacoes" class="form-control" placeholder="Observações importantes ou recomendações"></textarea>
-      </div>
-
-      <div class="mb-3">
-        <label class="form-label">Assinatura do Técnico <span class="text-danger">*</span></label>
-        <canvas id="signature-pad" style="border:2px dashed #0d6efd; border-radius: 12px; width: 100%; height: 180px; background:#121212; cursor: crosshair;"></canvas>
-      </div>
-
-      <div class="d-flex gap-3 justify-content-center mt-3 flex-wrap">
-        <button type="button" class="btn btn-danger btn-clear" id="clear-signature">Limpar Assinatura</button>
-        <button type="submit" class="btn btn-primary btn-submit">Gerar PDF</button>
-      </div>
-
-    </form>
+  <div class="checklist-section">
+    <h2>Casa de Máquinas</h2>
+    <label class="check-item"><input type="checkbox" name="motor" /> Motor de tração - Estado geral</label>
+    <label class="check-item"><input type="checkbox" name="freio" /> Freio eletromagnético - Funcionamento</label>
+    <label class="check-item"><input type="checkbox" name="redutor" /> Redutor - Nível de óleo / ruídos</label>
+    <label class="check-item"><input type="checkbox" name="quadro" /> Quadro de comando - Limpeza / conexões</label>
+    <label class="check-item"><input type="checkbox" name="limitador" /> Limitador de velocidade - Teste</label>
+    <label class="check-item"><input type="checkbox" name="cabos" /> Cabos de tração - Desgaste / lubrificação</label>
+    <label class="check-item"><input type="checkbox" name="polias" /> Polias - Estado / alinhamento</label>
+    <label class="check-item"><input type="checkbox" name="ventilacao" /> Ventilação da casa de máquinas</label>
+    <label class="check-item"><input type="checkbox" name="iluminacaoEmergencia" /> Iluminação de emergência</label>
+    <label class="check-item"><input type="checkbox" name="limpeza" /> Limpeza geral do ambiente</label>
+  </div>
+  
+  <div class="checklist-section">
+    <h2>Cabina</h2>
+    <label class="check-item"><input type="checkbox" name="portas" /> Portas - Abertura / fechamento</label>
+    <label class="check-item"><input type="checkbox" name="botoes" /> Botões - Funcionamento</label>
+    <label class="check-item"><input type="checkbox" name="display" /> Display / Indicadores</label>
+    <label class="check-item"><input type="checkbox" name="iluminacaoInterna" /> Iluminação interna</label>
+    <label class="check-item"><input type="checkbox" name="ventilacaoCabina" /> Ventilação / Exaustor</label>
+    <label class="check-item"><input type="checkbox" name="interfone" /> Interfone / Alarme</label>
+    <label class="check-item"><input type="checkbox" name="espelho" /> Espelho / Acabamentos</label>
+    <label class="check-item"><input type="checkbox" name="piso" /> Piso / Nivelamento</label>
   </div>
 
-  <!-- Bootstrap 5 JS Bundle -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <div class="checklist-section">
+    <h2>Poço</h2>
+    <label class="check-item"><input type="checkbox" name="amortecedores" /> Amortecedores - Estado</label>
+    <label class="check-item"><input type="checkbox" name="limpezaPoco" /> Limpeza do poço</label>
+    <label class="check-item"><input type="checkbox" name="drenagem" /> Drenagem de água</label>
+    <label class="check-item"><input type="checkbox" name="iluminacaoPoco" /> Iluminação</label>
+    <label class="check-item"><input type="checkbox" name="cabosEletricos" /> Cabos elétricos - Fixação</label>
+  </div>
 
-  <script>
-    // Bootstrap form validation
-    (() => {
-      const form = document.getElementById('checklistForm');
-      form.addEventListener('submit', function (event) {
-        event.preventDefault();
-        if (!form.checkValidity()) {
-          event.stopPropagation();
-          form.classList.add('was-validated');
-          return;
-        }
+  <label for="reparosExecutados" style="margin-top: 30px;">Reparos Executados <span class="required">*</span></label>
+  <textarea id="reparosExecutados" name="reparosExecutados" minlength="10" placeholder="Descreva detalhadamente os reparos..." required></textarea>
 
-        if (!signatureDrawn()) {
-          alert('Por favor, assine o formulário antes de gerar o PDF.');
-          return;
-        }
+  <label for="observacoes" style="margin-top: 20px;">Observações / Recomendações</label>
+  <textarea id="observacoes" name="observacoes" placeholder="Observações importantes ou recomendações"></textarea>
 
-        alert('Formulário válido. Aqui você pode implementar a geração do PDF.');
-      }, false);
-    })();
+  <label class="signature-label" style="margin-top: 30px;">Assinatura do Técnico <span class="required">*</span></label>
+  <canvas id="signature-pad" style="border: 2px dashed #3498db; border-radius: 15px; width: 100%; height: 220px; background-color: #f9fdff; cursor: crosshair;"></canvas>
 
-    // Canvas assinatura
-    const canvas = document.getElementById('signature-pad');
-    const ctx = canvas.getContext('2d');
-    let drawing = false;
+  <div style="margin-top: 30px; text-align: center;">
+    <button type="button" id="clear-signature" style="margin-right: 20px; background-color: #e74c3c; color: white; border: none; padding: 12px 30px; border-radius: 50px; font-weight: 600; cursor: pointer;">Limpar Assinatura</button>
+    <button type="submit" id="generate-pdf" style="background-color: #2980b9; color: white; border: none; padding: 12px 45px; border-radius: 50px; font-weight: 600; cursor: pointer;">Gerar PDF</button>
+  </div>
 
-    function resizeCanvas() {
-      const ratio = window.devicePixelRatio || 1;
-      canvas.width = canvas.offsetWidth * ratio;
-      canvas.height = 180 * ratio;
-      canvas.style.height = '180px';
-      ctx.scale(ratio, ratio);
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-      ctx.lineWidth = 3;
-      ctx.strokeStyle = '#0d6efd';
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+</form>
+
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script>
+  const canvas = document.getElementById('signature-pad');
+  const ctx = canvas.getContext('2d');
+  let isDrawing = false;
+
+  function resizeCanvas() {
+    const ratio = window.devicePixelRatio || 1;
+    canvas.width = canvas.offsetWidth * ratio;
+    canvas.height = 220 * ratio;
+    canvas.style.height = '220px';
+    ctx.scale(ratio, ratio);
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = '#3498db';
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  canvas.addEventListener('mousedown', e => {
+    isDrawing = true;
+    ctx.beginPath();
+    ctx.moveTo(e.offsetX, e.offsetY);
+  });
+  canvas.addEventListener('mousemove', e => {
+    if (!isDrawing) return;
+    ctx.lineTo(e.offsetX, e.offsetY);
+    ctx.stroke();
+  });
+  window.addEventListener('mouseup', () => isDrawing = false);
+
+  canvas.addEventListener('touchstart', e => {
+    e.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    const touch = e.touches[0];
+    ctx.beginPath();
+    ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
+    isDrawing = true;
+  });
+  canvas.addEventListener('touchmove', e => {
+    e.preventDefault();
+    if (!isDrawing) return;
+    const rect = canvas.getBoundingClientRect();
+    const touch = e.touches[0];
+    ctx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
+    ctx.stroke();
+  });
+  window.addEventListener('touchend', e => {
+    e.preventDefault();
+    isDrawing = false;
+  });
+
+  document.getElementById('clear-signature').addEventListener('click', () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  });
+
+  document.getElementById('checklistForm').addEventListener('submit', async e => {
+    e.preventDefault();
+
+    if (!e.target.checkValidity()) {
+      alert('Por favor, preencha todos os campos obrigatórios corretamente.');
+      e.target.reportValidity();
+      return;
     }
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
 
-    const startDraw = (x, y) => {
-      drawing = true;
-      ctx.beginPath();
-      ctx.moveTo(x, y);
-    };
-
-    const draw = (x, y) => {
-      if (!drawing) return;
-      ctx.lineTo(x, y);
-      ctx.stroke();
-    };
-
-    const endDraw = () => {
-      drawing = false;
-    };
-
-    // Mouse events
-    canvas.addEventListener('mousedown', e => startDraw(e.offsetX, e.offsetY));
-    canvas.addEventListener('mousemove', e => draw(e.offsetX, e.offsetY));
-    window.addEventListener('mouseup', endDraw);
-
-    // Touch events
-    canvas.addEventListener('touchstart', e => {
-      e.preventDefault();
-      const rect = canvas.getBoundingClientRect();
-      const touch = e.touches[0];
-      startDraw(touch.clientX - rect.left, touch.clientY - rect.top);
-    });
-    canvas.addEventListener('touchmove', e => {
-      e.preventDefault();
-      const rect = canvas.getBoundingClientRect();
-      const touch = e.touches[0];
-      draw(touch.clientX - rect.left, touch.clientY - rect.top);
-    });
-    window.addEventListener('touchend', e => {
-      e.preventDefault();
-      endDraw();
-    });
-
-    // Resetar assinatura
-    document.getElementById('clear-signature').addEventListener('click', () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    });
-
-    // Checar se usuário assinou (canvas não está vazio)
-    function signatureDrawn() {
-      const blank = document.createElement('canvas');
-      blank.width = canvas.width;
-      blank.height = canvas.height;
-      return canvas.toDataURL() !== blank.toDataURL();
+    const blank = document.createElement('canvas');
+    blank.width = canvas.width;
+    blank.height = canvas.height;
+    if (canvas.toDataURL() === blank.toDataURL()) {
+      alert('Por favor, assine o checklist.');
+      return;
     }
-  </script>
+
+    try {
+      const dados = {};
+      new FormData(e.target).forEach((value, key) => {
+        dados[key] = value;
+      });
+
+      ['motor','freio','redutor','quadro','limitador','cabos','polias','ventilacao','iluminacaoEmergencia','limpeza','portas','botoes','display','iluminacaoInterna','ventilacaoCabina','interfone','espelho','piso','amortecedores','limpezaPoco','drenagem','iluminacaoPoco','cabosEletricos'].forEach(id => {
+        dados[id] = document.getElementsByName(id)[0].checked ? "Ok" : "Pendente";
+      });
+      dados['assinatura'] = canvas.toDataURL();
+
+      const content = `
+        <div style="font-family: Arial, sans-serif; padding: 20px; color: #253858;">
+          <h2 style="text-align:center;">Checklist Digital – Lift Control</h2>
+          <hr />
+          <h3>Dados do Condomínio</h3>
+          <p><strong>Nome:</strong> ${dados.nomeCondominio}</p>
+          <p><strong>Endereço:</strong> ${dados.endereco}</p>
+          <p><strong>Total de Elevadores:</strong> ${dados.totalElevadores}</p>
+          <p><strong>Elevador Inspecionado:</strong> ${dados.elevadorInspecionado}</p>
+          <p><strong>Email:</strong> ${dados.emailCondominio}</p>
+          <p><strong>Telefone:</strong> ${dados.telefoneResponsavel}</p>
+          <hr />
+          <h3>Manutenção</h3>
+          <p><strong>Data:</strong> ${dados.dataManutencao}</p>
+          <p><strong>Tipo:</strong> ${dados.tipoManutencao}</p>
+          <p><strong>Técnico:</strong> ${dados.nomeTecnico}</p>
+          <p><strong>Empresa:</strong> ${dados.empresaTecnico}</p>
+          <p><strong>Registro:</strong> ${dados.registroTecnico || 'N/A'}</p>
+          <hr />
+          <h3>Casa de Máquinas</h3>
+          <ul>
+            <li>Motor de tração: ${dados.motor}</li>
+            <li>Freio eletromagnético: ${dados.freio}</li>
+            <li>Redutor: ${dados.redutor}</li>
+            <li>Quadro de comando: ${dados.quadro}</li>
+            <li>Limitador de velocidade: ${dados.limitador}</li>
+            <li>Cabos de tração: ${dados.cabos}</li>
+            <li>Polias: ${dados.polias}</li>
+            <li>Ventilação: ${dados.ventilacao}</li>
+            <li>Iluminação de emergência: ${dados.iluminacaoEmergencia}</li>
+            <li>Limpeza geral: ${dados.limpeza}</li>
+          </ul>
+          <h3>Cabina</h3>
+          <ul>
+            <li>Portas: ${dados.portas}</li>
+            <li>Botões: ${dados.botoes}</li>
+            <li>Display / Indicadores: ${dados.display}</li>
+            <li>Iluminação interna: ${dados.iluminacaoInterna}</li>
+            <li>Ventilação / Exaustor: ${dados.ventilacaoCabina}</li>
+            <li>Interfone / Alarme: ${dados.interfone}</li>
+            <li>Espelho / Acabamentos: ${dados.espelho}</li>
+            <li>Piso / Nivelamento: ${dados.piso}</li>
+          </ul>
+          <h3>Poço</h3>
+          <ul>
+            <li>Amortecedores: ${dados.amortecedores}</li>
+            <li>Limpeza do poço: ${dados.limpezaPoco}</li>
+            <li>Drenagem de água: ${dados.drenagem}</li>
+            <li>Iluminação: ${dados.iluminacaoPoco}</li>
+            <li>Cabos elétricos: ${dados.cabosEletricos}</li>
+          </ul>
+          <hr />
+          <h3>Reparos Executados</h3>
+          <p>${dados.reparosExecutados}</p>
+          <h3>Observações / Recomendações</h3>
+          <p>${dados.observacoes || ''}</p>
+          <hr/>
+          <h3>Assinatura do Técnico</h3>
+          <img src="${dados.assinatura}" style="width:300px; border:1px solid #3498db; border-radius:8px;" />
+          <p style="font-size:12px; color:#666; text-align:center;">Gerado por Lift Control - ${new Date().toLocaleString()}</p>
+        </div>`;
+
+      const container = document.createElement('div');
+      container.style.padding = "20px";
+      container.style.background = "white";
+      container.innerHTML = content;
+      document.body.appendChild(container);
+
+      html2canvas(container, { scale: 3 }).then(canvasImg => {
+        const imgData = canvasImg.toDataURL('image/png');
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'pt', 'a4');
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (canvasImg.height * pdfWidth) / canvasImg.width;
+        pdf.addImage(imgData, 'PNG', 10, 10, pdfWidth - 20, pdfHeight);
+        pdf.save(`Checklist_${dados.nomeCondominio.replace(/\s+/g,"")}_${dados.elevadorInspecionado.replace(/\s+/g,"")}.pdf`);
+        document.body.removeChild(container);
+      });
+    } catch (e) {
+      alert("Erro na geração do PDF:\n"+e);
+    }
+  });
+</script>
+
 </body>
 </html>
