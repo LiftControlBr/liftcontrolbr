@@ -1,152 +1,112 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Demo Checklist Digital – Lift Control</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Demo Checklist – Lift Control</title>
 
-<style>
-  * {
-    box-sizing: border-box;
-  }
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0; padding: 30px;
-    background-color: #376899; /* azul petróleo escuro */
-    color: #f0f5fa;
-  }
-  form {
-    background-color: #4170a5; /* azul petróleo médio */
-    max-width: 720px;
-    margin: 0 auto;
-    padding: 30px 40px;
-    border-radius: 12px;
-    box-shadow: 0 10px 40px #11335099;
-    color: #f0f5fa;
-  }
-  h1 {
-    text-align: center;
-    margin-bottom: 25px;
-    font-weight: 700;
-    font-size: 1.8rem;
-    color: #dbe9fb;
-  }
-  label {
-    display: block;
-    margin-top: 18px;
-    font-weight: 600;
-    font-size: 16px;
-    color: #dbe9fb;
-  }
-  input[type="text"], input[type="email"], input[type="number"], input[type="date"], select, textarea {
-    width: 100%;
-    padding: 12px 15px;
-    font-size: 16px;
-    border-radius: 8px;
-    border: none;
-    margin-top: 8px;
-    box-sizing: border-box;
-    font-weight: 500;
-    background-color: #f8f9fa;
-    color: #253858;
-    transition: box-shadow 0.3s ease;
-  }
-  input[type="text"]:focus, input[type="email"]:focus, input[type="number"]:focus, input[type="date"]:focus, select:focus, textarea:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px #9abcec;
-  }
-  textarea {
-    min-height: 100px;
-    resize: vertical;
-  }
-  label.check-item {
-    display: flex;
-    align-items: center;
-    padding: 12px 15px;
-    background-color: #3b5d81; /* azul escuro */
-    margin: 12px 0;
-    cursor: pointer;
-    user-select: none;
-    border-radius: 10px;
-    color: #dbe9fb;
-    font-weight: 600;
-    font-size: 15px;
-    transition: background-color 0.3s ease;
-  }
-  label.check-item:hover, label.check-item:focus-within {
-    background-color: #5f7fa6;
-  }
-  label.check-item input[type="checkbox"] {
-    margin-right: 15px;
-    width: 26px;
-    height: 26px;
-    cursor: pointer;
-    flex-shrink: 0;
-  }
-  label.signature-label {
-    font-weight: 700;
-    font-size: 16px;
-    margin-top: 35px;
-    display: block;
-    color: #dbe9fb;
-  }
-  #signature-pad {
-    width: 100%;
-    height: 220px;
-    border: 2px dashed #9abcec;
-    border-radius: 14px;
-    cursor: crosshair;
-    background: #fefeff;
-    margin-top: 10px;
-  }
-  .buttons {
-    margin-top: 40px;
-    display: flex;
-    justify-content: center;
-    gap: 25px;
-    flex-wrap: wrap;
-  }
-  button {
-    padding: 15px 50px;
-    font-size: 18px;
-    font-weight: 700;
-    border-radius: 48px;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  button.clear-button {
-    background-color: #ef6a6a;
-    color: white;
-    box-shadow: 0 6px 15px #ef6a6a88;
-  }
-  button.clear-button:hover {
-    background-color: #c55353;
-  }
-  button.submit-button {
-    background-color: #3380ff;
-    color: white;
-    box-shadow: 0 6px 15px #3380ff88;
-  }
-  button.submit-button:hover {
-    background-color: #2866cc;
-  }
-  @media (max-width: 600px) {
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f2f5;
+      margin: 0;
+      padding: 30px;
+      color: #1f2d48;
+    }
     form {
-      padding: 25px 20px;
+      max-width: 720px;
+      background-color: white;
+      margin: 0 auto;
+      padding: 35px 40px;
+      border-radius: 14px;
+      box-shadow: 0 0 15px rgb(31 49 71 / 0.15);
+      color: #1f2d48;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 40px;
+      font-weight: 700;
+      font-size: 24px;
+    }
+    label {
+      display: block;
+      margin-top: 20px;
+      font-weight: 600;
+      font-size: 16px;
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="number"],
+    input[type="date"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px 15px;
+      font-size: 15px;
+      border-radius: 8px;
+      border: 1.5px solid #ccd7e0;
+      margin-top: 8px;
+      box-sizing: border-box;
+      font-weight: 500;
+      color: #1f2d48;
+      resize: vertical;
+      min-height: 60px;
+    }
+    select {
+      height: 40px;
+    }
+    label.check-item {
+      display: flex;
+      align-items: center;
+      margin: 12px 0;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 15px;
+      color: #2e3a59;
+      user-select: none;
+    }
+    label.check-item input[type="checkbox"] {
+      margin-right: 12px;
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .button-container {
+      margin-top: 40px;
+      text-align: center;
     }
     button {
-      width: 100%;
-      padding: 18px 0;
-      font-size: 20px;
+      background-color: #4a90e2;
+      border: none;
+      padding: 14px 55px;
+      border-radius: 50px;
+      color: white;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
     }
-    .buttons {
-      flex-direction: column;
-      gap: 20px;
-      align-items: stretch;
+    button:hover {
+      background-color: #3b79c2;
     }
-  }
-</style>
+    @media (max-width: 480px) {
+      form {
+        padding: 25px 20px;
+      }
+      button {
+        width: 100%;
+        padding: 16px 0;
+        font-size: 18px;
+      }
+    }
+  </style>
 </head>
 <body>
 
@@ -154,13 +114,13 @@
   <h1>Checklist Digital – Lift Control (Demo)</h1>
 
   <label for="nomeCondominio">Nome do Condomínio</label>
-  <input id="nomeCondominio" name="nomeCondominio" type="text" placeholder="Ex: Edifício Solaris" autocomplete="off" />
+  <input id="nomeCondominio" name="nomeCondominio" type="text" placeholder="Ex: Edifício Solar" autocomplete="off" />
 
-  <label for="endereco">Endereço Completo</label>
-  <input id="endereco" name="endereco" type="text" autocomplete="off" />
+  <label for="enderecoCondominio">Endereço do Condomínio</label>
+  <input id="enderecoCondominio" name="enderecoCondominio" type="text" placeholder="Rua Exemplo, 123" />
 
-  <label for="totalElevadores">Total de Elevadores no Prédio</label>
-  <input id="totalElevadores" name="totalElevadores" type="number" min="1" autocomplete="off" />
+  <label for="quantElevadores">Quantidade de Elevadores</label>
+  <input id="quantElevadores" name="quantElevadores" type="number" placeholder="Ex: 10" min="1" />
 
   <label for="elevadorInspecionado">Elevador Inspecionado</label>
   <select id="elevadorInspecionado" name="elevadorInspecionado">
@@ -169,102 +129,33 @@
     <option>Serviço</option>
     <option>Elevador 1</option>
     <option>Elevador 2</option>
-    <option>Elevador 3</option>
   </select>
 
-  <label for="emailCondominio">Email do Condomínio</label>
-  <input id="emailCondominio" name="emailCondominio" type="email" placeholder="contato@condominio.com" autocomplete="off" />
+  <div class="checklist-section">
+    <h2>Casa de Máquinas</h2>
+    <label class="check-item"><input type="checkbox" name="motor" /> Motor de tração - Estado geral</label>
+    <label class="check-item"><input type="checkbox" name="freio" /> Freio eletromagnético - Funcionamento</label>
+    <label class="check-item"><input type="checkbox" name="redutor" /> Redutor - Nível de óleo / ruídos</label>
+  </div>
 
-  <label for="telefoneResponsavel">Telefone do Responsável</label>
-  <input id="telefoneResponsavel" name="telefoneResponsavel" type="text" placeholder="(13) 99999-9999" autocomplete="off" />
+  <div class="checklist-section">
+    <h2>Cabina</h2>
+    <label class="check-item"><input type="checkbox" name="portas" /> Portas - Abertura e fechamento</label>
+    <label class="check-item"><input type="checkbox" name="botoes" /> Botões - Funcionamento</label>
+  </div>
 
-  <label for="dataManutencao">Data da Manutenção</label>
-  <input id="dataManutencao" name="dataManutencao" type="date" />
+  <label for="reparosExecutados" style="margin-top: 30px;">Reparos Executados</label>
+  <textarea id="reparosExecutados" name="reparosExecutados" placeholder="Descreva resumidamente os reparos..." minlength="5"></textarea>
 
-  <label for="tipoManutencao">Tipo de Manutenção</label>
-  <select id="tipoManutencao" name="tipoManutencao">
-    <option value="" disabled selected>Selecione...</option>
-    <option>Preventiva</option>
-    <option>Corretiva</option>
-    <option>Emergencial</option>
-    <option>Inspeção</option>
-  </select>
-
-  <label for="nomeTecnico">Nome Completo do Técnico</label>
-  <input id="nomeTecnico" name="nomeTecnico" type="text" placeholder="Nome completo" autocomplete="off" />
-
-  <label for="empresaTecnico">Empresa do Técnico</label>
-  <input id="empresaTecnico" name="empresaTecnico" type="text" autocomplete="off" />
-
-  <label class="signature-label">Assinatura do Técnico</label>
-  <canvas id="signature-pad"></canvas>
-
-  <div class="buttons">
-    <button type="button" id="clear-signature" class="clear-button">Limpar Assinatura</button>
-    <button type="submit" class="submit-button">Enviar (Demo)</button>
+  <div class="button-container">
+    <button type="submit">Enviar (Demo)</button>
   </div>
 </form>
 
 <script>
-  const canvas = document.getElementById('signature-pad');
-  const ctx = canvas.getContext('2d');
-  let drawing = false;
-
-  function resizeCanvas() {
-    const ratio = window.devicePixelRatio || 1;
-    canvas.width = canvas.offsetWidth * ratio;
-    canvas.height = 220 * ratio;
-    canvas.style.height = '220px';
-    ctx.scale(ratio, ratio);
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-    ctx.lineWidth = 3;
-    ctx.strokeStyle = '#3380ff';
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-  }
-  resizeCanvas();
-  window.addEventListener('resize', resizeCanvas);
-
-  canvas.addEventListener('mousedown', e => {
-    drawing = true;
-    ctx.beginPath();
-    ctx.moveTo(e.offsetX, e.offsetY);
-  });
-  canvas.addEventListener('mousemove', e => {
-    if (!drawing) return;
-    ctx.lineTo(e.offsetX, e.offsetY);
-    ctx.stroke();
-  });
-  window.addEventListener('mouseup', () => drawing = false);
-
-  canvas.addEventListener('touchstart', e => {
+  document.getElementById("demoForm").addEventListener("submit", function(e) {
     e.preventDefault();
-    const rect = canvas.getBoundingClientRect();
-    const t = e.touches[0];
-    ctx.beginPath();
-    ctx.moveTo(t.clientX - rect.left, t.clientY - rect.top);
-    drawing = true;
-  });
-  canvas.addEventListener('touchmove', e => {
-    e.preventDefault();
-    if (!drawing) return;
-    const rect = canvas.getBoundingClientRect();
-    const t = e.touches[0];
-    ctx.lineTo(t.clientX - rect.left, t.clientY - rect.top);
-    ctx.stroke();
-  });
-  window.addEventListener('touchend', e => {
-    e.preventDefault();
-    drawing = false;
-  });
-
-  document.getElementById('clear-signature').addEventListener('click', () => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-  });
-
-  document.getElementById('demoForm').addEventListener('submit', e => {
-    e.preventDefault();
-    alert('Este é um formulário de demonstração. Nenhum dado será enviado ou salvo.');
+    alert("Este é um formulário de demonstração. Nenhum dado será enviado ou salvo.");
   });
 </script>
 
