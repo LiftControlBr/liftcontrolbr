@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Checklist de Manutenção - Elevador</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f5f5f5;
+    padding: 10px;
+  }
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 12px;
+    padding: 30px 40px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #444;
+  }
+  label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
+  }
+  input[type="text"], input[type="email"], input[type="date"], input[type="time"], select, textarea {
+    margin-top: 5px;
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+  }
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+  .checklist-section {
+    margin-top: 25px;
+  }
+  .check-item {
+    display: flex;
+    align-items: center;
+    margin: 8px 0;
+  }
+  .check-item input {
+    margin-right: 10px;
+    width: 20px;
+    height: 20px;
+  }
+  .signature-pad {
+    border: 2px dashed #667eea;
+    border-radius: 8px;
+    background: #f8f9fa;
+    cursor: crosshair;
+    width: 100%;
+    height: 200px;
+    margin-top: 15px;
+  }
+  .buttons {
+    margin-top: 30px;
+    text-align: center;
+  }
+  button {
+    background: #667eea;
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 50px;
+    cursor: pointer;
+    margin: 0 15px;
+    transition: background-color 0.3s ease;
+  }
+  button:hover {
+    background: #764ba2;
+  }
+  button:disabled {
+    background: #999;
+    cursor: not-allowed;
+  }
+  .clear-button {
+    background: #f44336;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Checklist Digital de Manutenção - Elevador</h1>
+
+  <form id="checklistForm">
+    <label>Nome do Condomínio <span style="color: red;">*</span></label>
+    <input type="text" id="nomeCondominio" required placeholder="Ex: Edifício Solar das Palmeiras" />
+
+    <label>Endereço Completo <span style="color: red;">*</span></label>
+    <input type="text" id="endereco" required />
+
+    <label>Total de Elevadores no Prédio <span style="color: red;">*</span></label>
+    <input type="number" id="totalElevadores" min="1" required />
+
+    <label>Elevador Inspecionado <span style="color: red;">*</span></label>
+    <select id="elevadorInspecionado" required>
+      <option value="">Selecione...</option>
+      <option>Social</option>
+      <option>Serviço</option>
+      <option>Elevador 1</option>
+      <option>Elevador 2</option>
+      <option>Elevador 3</option>
+    </select>
+
+    <label>Email do Condomínio <span style="color: red;">*</span></label>
+    <input type="email" id="emailCondominio" required placeholder="contato@condominio.com" />
+
+    <label>Telefone do Responsável <span style="color: red;">*</span></label>
+    <input type="text" id="telefoneResponsavel" required placeholder="(13) 99999-9999" />
+
+    <label>Data da Manutenção <span style="color: red;">*</span></label>
+    <input type="date" id="dataManutencao" required />
+
+    <label>Tipo de Manutenção <span style="color: red;">*</span></label>
+    <select id="tipoManutencao" required>
+      <option value="">Selecione...</option>
+      <option>Preventiva</option>
+      <option>Corretiva</option>
+      <option>Emergencial</option>
+    </select>
+
+    <label>Nome Completo do Técnico <span style="color: red;">*</span></label>
+    <input type="text" id="nomeTecnico" required placeholder="Nome completo" />
+
+    <label>Empresa do Técnico <span style="color: red;">*</span></label>
+    <input type="text" id="empresaTecnico" required />
+
+    <label>CREA / Registro Profissional</label>
+    <input type="text" id="registroTecnico" />
+
+    <!-- Checklist casa de máquinas -->
+    <div class="checklist-section">
+      <h3>Casa de Máquinas</h3>
+
+      <div class="check-item"><input type="checkbox" id="motor" /><label for="motor">Motor de tração - Estado geral</label></div>
+      <div class="check-item"><input type="checkbox" id="freio" /><label for="freio">Freio eletromagnético - Funcionamento</label></div>
+      <div class="check-item"><input type="checkbox" id="redutor" /><label for="redutor">Redutor - Nível de óleo / ruídos</label></div>
+      <div class="check-item"><input type="checkbox" id="quadro" /><label for="quadro">Quadro de comando - Limpeza / conexões</label></div>
+      <div class="check-item"><input type="checkbox" id="limitador" /><label for="limitador">Limitador de velocidade - Teste</label></div>
+      <div class="check-item"><input type="checkbox" id="cabos" /><label for="cabos">Cabos de tração - Desgaste / lubrificação</label></div>
+      <div class="check-item"><input type="checkbox" id="polias" /><label for="polias">Polias - Estado / alinhamento</label></div>
+      <div class="check-item"><input type="checkbox" id="ventilacao" /><label for="ventilacao">Ventilação da casa de máquinas</label></div>
+      <div class="check-item"><input type="checkbox" id="iluminacaoEmergencia" /><label for="iluminacaoEmergencia">Iluminação de emergência</label></div>
+      <div class="check-item"><input type="checkbox" id="limpeza" /><label for="limpeza">Limpeza geral do ambiente</label></div>
+    </div>
+
+    <!-- Checklist cabina -->
+    <div class="checklist-section">
+      <h3>Cabina</h3>
+      <div class="check-item"><input type="checkbox" id="portas" /><label for="portas">Portas - Abertura / fechamento</label></div>
+      <div class="check-item"><input type="checkbox" id="botoes" /><label for="botoes">Botões - Funcionamento</label></div>
+      <div class="check-item"><input type="checkbox" id="display" /><label for="display">Display / Indicadores</label></div>
+      <div class="check-item"><input type="checkbox" id="iluminacaoInterna" /><label for="iluminacaoInterna">Iluminação interna</label></div>
+      <div class="check-item"><input type="checkbox" id="ventilacaoCabina" /><label for="ventilacaoCabina">Ventilação / Exaustor</label></div>
+      <div class="check-item"><input type="checkbox" id="interfone" /><label for="interfone">Interfone / Alarme</label></div>
+      <div class="check-item"><input type="checkbox" id="espelho" /><label for="espelho">Espelho / Acabamentos</label></div>
+      <div class="check-item"><input type="checkbox" id="piso" /><label for="piso">Piso / Nivelamento</label></div>
+    </div>
+
+    <!-- Checklist poço -->
+    <div class="checklist-section">
+      <h3>Poço</h3>
+      <div class="check-item"><input type="checkbox" id="amortecedores" /><label for="amortecedores">Amortecedores - Estado</label></div>
+      <div class="check-item"><input type="checkbox" id="limpezaPoco" /><label for="limpezaPoco">Limpeza do poço</label></div>
+      <div class="check-item"><input type="checkbox" id="drenagem" /><label for="drenagem">Drenagem de água</label></div>
+      <div class="check-item"><input type="checkbox" id="iluminacaoPoco" /><label for="iluminacaoPoco">Iluminação</label></div>
+      <div class="check-item"><input type="checkbox" id="cabosEletricos" /><label for="cabosEletricos">Cabos elétricos - Fixação</label></div>
+    </div>
+
+    <label>Reparos Executados <span style="color: red;">*</span></label>
+    <textarea id="reparosExecutados" placeholder="Descreva detalhadamente os reparos..." required></textarea>
+
+    <label>Observações / Recomendações</label>
+    <textarea id="observacoes" placeholder="Observações importantes ou recomendações para próximas manutenções"></textarea>
+
+    <!-- Assinatura -->
+    <label>Assinatura do Técnico <span style="color: red;">*</span></label>
+    <canvas id="signature-pad" class="signature-pad"></canvas>
+    <div class="buttons">
+      <button type="button" id="clear">Limpar Assinatura</button>
+      <button type="submit" id="generatePDF">Gerar PDF</button>
+    </div>
+  </form>
+</div>
+
+<script>
+  // Assinatura Canvas
+  const canvas = document.getElementById("signature-pad");
+  const ctx = canvas.getContext("2d");
+  let drawing = false;
+
+  // Ajustar tamanho para tela
+  function resizeCanvas() {
+    const ratio = Math.max(window.devicePixelRatio || 1, 1);
+    canvas.width = canvas.offsetWidth * ratio;
+    canvas.height = 200 * ratio;
+    canvas.style.width = canvas.offsetWidth + "px";
+    canvas.style.height = "200px";
+    ctx.scale(ratio, ratio);
+    ctx.lineCap = "round";
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = "#000";
+  }
+  resizeCanvas();
+  window.addEventListener("resize", resizeCanvas);
+
+  canvas.addEventListener("mousedown", e => {
+    drawing = true;
+    ctx.beginPath();
+    ctx.moveTo(e.offsetX, e.offsetY);
+  });
+  canvas.addEventListener("mousemove", e => {
+    if (!drawing) return;
+    ctx.lineTo(e.offsetX, e.offsetY);
+    ctx.stroke();
+  });
+  window.addEventListener("mouseup", () => {
+    drawing = false;
+  });
+
+  // Touch events
+  canvas.addEventListener("touchstart", e => {
+    e.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    const touch = e.touches[0];
+    ctx.beginPath();
+    ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
+    drawing = true;
+  });
+  canvas.addEventListener("touchmove", e => {
+    e.preventDefault();
+    if (!drawing) return;
+    const rect = canvas.getBoundingClientRect();
+    const touch = e.touches[0];
+    ctx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
+    ctx.stroke();
+  });
+  window.addEventListener("touchend", e => {
+    e.preventDefault();
+    drawing = false;
+  });
+
+  // Botão limpar assinatura
+  document.getElementById("clear").addEventListener("click", () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  });
+
+  // Função gerar PDF usando jsPDF e html2canvas
+  document.getElementById("checklistForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    // Verificar se tem assinatura
+    const blank = document.createElement("canvas");
+    blank.width = canvas.width;
+    blank.height = canvas.height;
+    if (canvas.toDataURL() === blank.toDataURL()) {
+      alert("Por favor, assine antes de gerar o PDF.");
+      return;
+    }
+
+    // Montar HTML do checklist preenchido para PDF
+    const nomeCondominio = document.getElementById("nomeCondominio").value;
+    const endereco = document.getElementById("endereco").value;
+    const totalElevadores = document.getElementById("totalElevadores").value;
+    const elevadorInspecionado = document.getElementById("elevadorInspecionado").value;
+    const emailCondominio = document.getElementById("emailCondominio").value;
+    const telefoneResponsavel = document.getElementById("telefoneResponsavel").value;
+    const dataManutencao = document.getElementById("dataManutencao").value;
+    const tipoManutencao = document.getElementById("tipoManutencao").value;
+    const nomeTecnico = document.getElementById("nomeTecnico").value;
+    const empresaTecnico = document.getElementById("empresaTecnico").value;
+    const registroTecnico = document.getElementById("registroTecnico").value || "N/A";
+    const reparosExecutados = document.getElementById("reparosExecutados").value;
+    const observacoes = document.getElementById("observacoes").value || "Nenhuma";
+
+    // Função para verificar checkbox
+    function checkStatus(id) {
+      return document.getElementById(id).checked ? "✅ OK" : "❌ NÃO OK";
+    }
+
+    // Criar conteúdo para html2canvas gerar imagem para o PDF
+    const contentHTML = `
+    <div style="font-family: Arial; padding: 20px; font-size: 12px; color: #333;">
+      <h2 style="text-align:center;">Checklist de Manutenção - Elevador</h2>
+      <hr/>
+      <h3>Dados do Condomínio</h3>
+      <p><strong>Nome:</strong> ${nomeCondominio}</p>
+      <p><strong>Endereço:</strong> ${endereco}</p>
+      <p><strong>Total de Elevadores:</strong> ${totalElevadores}</p>
+      <p><strong>Elevador Inspecionado:</strong> ${elevadorInspecionado}</p>
+      <p><strong>Email:</strong> ${emailCondominio}</p>
+      <p><strong>Telefone:</strong> ${telefoneResponsavel}</p>
+      <hr/>
+      <h3>Dados da Manutenção</h3>
+      <p><strong>Data:</strong> ${dataManutencao}</p>
+      <p><strong>Tipo:</strong> ${tipoManutencao}</p>
+      <hr/>
+      <h3>Técnico</h3>
+      <p><strong>Nome:</strong> ${nomeTecnico}</p>
+      <p><strong>Empresa:</strong> ${empresaTecnico}</p>
+      <p><strong>Registro:</strong> ${registroTecnico}</p>
+      <hr/>
+      <h3>Casa de Máquinas</h3>
+      <ul>
+        <li>Motor de tração: ${checkStatus("motor")}</li>
+        <li>Freio eletromagnético: ${checkStatus("freio")}</li>
+        <li>Redutor: ${checkStatus("redutor")}</li>
+        <li>Quadro de comando: ${checkStatus("quadro")}</li>
+        <li>Limitador de velocidade: ${checkStatus("limitador")}</li>
+        <li>Cabos de tração: ${checkStatus("cabos")}</li>
+        <li>Polias: ${checkStatus("polias")}</li>
+        <li>Ventilação: ${checkStatus("ventilacao")}</li>
+        <li>Iluminação de emergência: ${checkStatus("iluminacaoEmergencia")}</li>
+        <li>Limpeza geral: ${checkStatus("limpeza")}</li>
+      </ul>
+      <h3>Cabina</h3>
+      <ul>
+        <li>Portas: ${checkStatus("portas")}</li>
+        <li>Botões: ${checkStatus("botoes")}</li>
+        <li>Display / Indicadores: ${checkStatus("display")}</li>
+        <li>Iluminação interna: ${checkStatus("iluminacaoInterna")}</li>
+        <li>Ventilação / Exaustor: ${checkStatus("ventilacaoCabina")}</li>
+        <li>Interfone / Alarme: ${checkStatus("interfone")}</li>
+        <li>Espelho / Acabamentos: ${checkStatus("espelho")}</li>
+        <li>Piso / Nivelamento: ${checkStatus("piso")}</li>
+      </ul>
+      <h3>Poço</h3>
+      <ul>
+        <li>Amortecedores: ${checkStatus("amortecedores")}</li>
+        <li>Limpeza do poço: ${checkStatus("limpezaPoco")}</li>
+        <li>Drenagem de água: ${checkStatus("drenagem")}</li>
+        <li>Iluminação: ${checkStatus("iluminacaoPoco")}</li>
+        <li>Cabos elétricos: ${checkStatus("cabosEletricos")}</li>
+      </ul>
+      <h3>Reparos Executados</h3>
+      <p>${reparosExecutados}</p>
+      <h3>Observações / Recomendações</h3>
+      <p>${observacoes}</p>
+      <h3>Assinatura do Técnico</h3>
+      <div><img src="${canvas.toDataURL()}" alt="Assinatura" style="width: 250px; border: 1px solid #ccc;"/></div>
+      <br/>
+      <p>Documento gerado em: ${new Date().toLocaleString()}</p>
+    </div>`;
+
+    // Criar div temporária para renderização
+    const div = document.createElement("div");
+    div.style.width = "700px"; // definir largura fixa para boa qualidade
+    div.innerHTML = contentHTML;
+    document.body.appendChild(div);
+
+    // Gerar imagem com html2canvas
+    html2canvas(div, { scale: 2 }).then(canvasImagem => {
+      const imgData = canvasImagem.toDataURL('image/png');
+      const pdf = new window.jspdf.jsPDF('p', 'pt', 'a4');
+      const imgProps = pdf.getImageProperties(imgData);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+      pdf.addImage(imgData, 'PNG', 10, 10, pdfWidth - 20, pdfHeight);
+      pdf.save(`Checklist_${nomeCondominio.replace(/\s+/g, '_')}_${elevadorInspecionado}.pdf`);
+
+      document.body.removeChild(div);
+      alert("PDF gerado com sucesso! Você pode enviar para o cliente por email ou whatsapp.");
+      
+      // Opcional: resetar formulário e limpar assinatura
+      this.reset();
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    });
+  });
+</script>
+</body>
+</html>
