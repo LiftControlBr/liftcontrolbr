@@ -20,7 +20,7 @@
     margin: 0 auto;
     background-color: #ffffff;
     border-radius: 14px;
-    padding: 45px 50px;
+    padding: 40px 35px;
     box-shadow: 0 10px 35px #112f52a0;
     color: #0c2340;
   }
@@ -38,13 +38,15 @@
   }
   input[type=text], input[type=email], input[type=number], input[type=date], select, textarea {
     width: 100%;
-    padding: 12px 15px;
+    max-width: 100%;
+    padding: 12px 12px;
     font-size: 15px;
     border-radius: 8px;
     border: 1.5px solid #ccd7e0;
     margin-top: 8px;
     color: #072a56;
     font-weight: 500;
+    box-sizing: border-box;
   }
   input[type=text]:focus, input[type=email]:focus, input[type=number]:focus, input[type=date]:focus, select:focus, textarea:focus {
     border-color: #2a65ad;
@@ -105,7 +107,7 @@
     transition: background-color 0.3s ease;
     background-color: #2a65ad;
     color: white;
-    box-shadow: 0 5px 15px rgb(42 101 173 / 0.7);
+    box-shadow: 0 5px 15px rgba(42, 101, 173, 0.7);
   }
   button:hover {
     background-color: #184a6e;
@@ -226,22 +228,21 @@
   <label for="observacoes" style="margin-top: 20px;">Observações / Recomendações</label>
   <textarea id="observacoes" name="observacoes" placeholder="Observações importantes ou recomendações"></textarea>
 
-  <div style="margin-top: 30px; text-align:center;">
-    <button type="submit" style="background-color: #2980b9; color: white; border: none; padding: 12px 45px; border-radius: 50px; font-weight: 600; cursor: pointer; font-size: 18px;">Enviar</button>
+  <div class="buttons">
+    <button type="submit">Gerar PDF</button>
   </div>
 </form>
 
 <script>
-  document.getElementById('checklistForm').addEventListener('submit', e => {
+  document.getElementById('checklistForm').addEventListener('submit', e=>{
     e.preventDefault();
-    if (!e.target.checkValidity()) {
+    if(!e.target.checkValidity()){
       alert('Por favor, preencha todos os campos obrigatórios corretamente.');
       e.target.reportValidity();
       return;
     }
-    alert('Formulário enviado (simulação).');
+    alert('Formulário válido! Você pode adicionar aqui a geração do PDF.');
   });
 </script>
-
 </body>
 </html>
