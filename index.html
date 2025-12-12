@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Lift Control - Acesso Seguro</title>
   <style>
-    /* Seu CSS original aqui (não modificado para manter estilo) */
     * {
       margin: 0;
       padding: 0;
@@ -139,17 +138,6 @@
       display: none;
     }
 
-    .token-link-container {
-      margin-top: 20px;
-      background: #d9edf7;
-      padding: 15px;
-      border-radius: 8px;
-      border: 1px solid #bce8f1;
-      word-break: break-word;
-      font-size: 14px;
-      color: #31708f;
-    }
-
     @media (max-width: 600px) {
       .container {
         padding: 40px 30px;
@@ -185,11 +173,6 @@
         <button type="submit">Acessar Sistema</button>
       </form>
 
-      <div id="tokenLinkContainer" class="token-link-container" style="display:none;">
-        <strong>Link para técnico:</strong> <br>
-        <a href="" target="_blank" id="tokenLink"></a>
-      </div>
-
       <div class="info-box">
         <h3>🔐 Primeiro acesso?</h3>
         <p>
@@ -206,10 +189,10 @@
       <p class="subtitle" id="condominioNome">Carregando...</p>
       
       <div style="display: flex; gap: 15px; flex-direction: column; margin-top: 30px;">
-        <a href="template-checklist.html" id="linkChecklist" target="_blank" style="display: block; background: #2c5364; color: white; padding: 16px; border-radius: 50px; text-decoration: none; font-weight: 600; transition: all 0.3s;">
+        <a href="template-checklist.html" style="display: block; background: #2c5364; color: white; padding: 16px; border-radius: 50px; text-decoration: none; font-weight: 600; transition: all 0.3s;">
           Abrir Checklist
         </a>
-        <a href="demo-checklist.html" target="_blank" style="display: block; background: #5a7c8a; color: white; padding: 16px; border-radius: 50px; text-decoration: none; font-weight: 600; transition: all 0.3s;">
+        <a href="demo-checklist.html" style="display: block; background: #5a7c8a; color: white; padding: 16px; border-radius: 50px; text-decoration: none; font-weight: 600; transition: all 0.3s;">
           Ver Demonstração
         </a>
       </div>
@@ -221,11 +204,14 @@
   </div>
 
   <script>
+    // ========== BANCO DE DADOS DE CONDOMINIOS ==========
+    // VOCÊ ADICIONA NOVOS CLIENTES AQUI
     const condominios = {
+      // Formato completo com todos os dados
       "SOLAR2025": {
         nome: "Edifício Solar",
         endereco: "Rua das Flores, 123 - Gonzaga, Santos/SP",
-        email: "rodraigof97@gmail.com",
+        email: "sindico@edificiosolar.com.br",
         telefone: "(13) 3234-5678",
         totalElevadores: "2"
       },
@@ -242,51 +228,40 @@
         email: "administracao@centralpark.com.br",
         telefone: "(13) 3456-7890",
         totalElevadores: "4"
-      }
+      },
+      // Adicione novos clientes aqui conforme fechar vendas
     };
 
-    // Mapa token para código condomínio
-    const tokenMap = {};
-
-    // Função simples para gerar token
-    function gerarToken() {
-      return Math.random().toString(36).substring(2, 10).toUpperCase();
-    }
-
+    // ========== SISTEMA DE LOGIN ==========
     document.getElementById('accessForm').addEventListener('submit', function(e) {
       e.preventDefault();
+      
       const code = document.getElementById('accessCode').value.trim().toUpperCase();
       const errorMsg = document.getElementById('errorMessage');
-
+      
+      // Verifica se o código existe
       if (condominios[code]) {
-        errorMsg.style.display = 'none';
+        // ACESSO AUTORIZADO
         localStorage.setItem('liftcontrol_auth', code);
+        
+        // Salva TODOS os dados do condomínio
         localStorage.setItem('liftcontrol_dados', JSON.stringify(condominios[code]));
-
-        // Gerar token para acesso do técnico (guardando associação local)
-        if (!tokenMap[code]) {
-          const token = gerarToken();
-          tokenMap[code] = token;
-        }
-        const token = tokenMap[code];
-        const link = `${window.location.origin}/template-checklist.html?token=${token}`;
-
-        // Mostrar link para o síndico copiar/enviar
-        const tokenContainer = document.getElementById('tokenLinkContainer');
-        const tokenLinkEl = document.getElementById('tokenLink');
-        tokenLinkEl.href = link;
-        tokenLinkEl.textContent = link;
-        tokenContainer.style.display = 'block';
-
+        
         showMainContent();
       } else {
+        // ACESSO NEGADO
         errorMsg.style.display = 'block';
         document.getElementById('accessCode').value = '';
         document.getElementById('accessCode').focus();
-        setTimeout(() => errorMsg.style.display = 'none', 3000);
+        
+        // Esconde mensagem após 3 segundos
+        setTimeout(() => {
+          errorMsg.style.display = 'none';
+        }, 3000);
       }
     });
 
+    // ========== VERIFICA SE JÁ ESTÁ LOGADO ==========
     window.addEventListener('load', function() {
       const auth = localStorage.getItem('liftcontrol_auth');
       if (auth && condominios[auth]) {
@@ -294,25 +269,32 @@
       }
     });
 
+    // ========== MOSTRA CONTEÚDO PRINCIPAL ==========
     function showMainContent() {
       const dados = JSON.parse(localStorage.getItem('liftcontrol_dados'));
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('mainContent').style.display = 'block';
       document.getElementById('condominioNome').textContent = dados.nome;
-
-      // Setar o link do checklist baseado no token
-      const code = localStorage.getItem('liftcontrol_auth');
-      const token = tokenMap[code];
-      if(token) {
-        document.getElementById('linkChecklist').href = `${window.location.origin}/template-checklist.html?token=${token}`;
-      }
     }
 
+    // ========== LOGOUT ==========
     function logout() {
       localStorage.removeItem('liftcontrol_auth');
       localStorage.removeItem('liftcontrol_dados');
       location.reload();
     }
+
+    // ========== PROTEGE AS OUTRAS PÁGINAS ==========
+    // Copie este código para template-checklist.html e demo-checklist.html
+    /*
+    window.addEventListener('load', function() {
+      const auth = localStorage.getItem('liftcontrol_auth');
+      if (!auth) {
+        alert('Acesso não autorizado. Faça login primeiro.');
+        window.location.href = 'index.html';
+      }
+    });
+    */
   </script>
 </body>
 </html>
