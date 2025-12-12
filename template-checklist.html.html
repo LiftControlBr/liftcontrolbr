@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Checklist Digital – Lift Control</title>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -84,6 +85,12 @@
       border-color: #2c5364;
     }
     
+    /* Campos pré-preenchidos ficam com fundo cinza claro */
+    input.auto-filled, select.auto-filled {
+      background-color: #f0f8ff;
+      border-color: #2c5364;
+    }
+    
     textarea {
       min-height: 100px;
     }
@@ -121,10 +128,15 @@
       box-shadow: 0 4px 15px rgba(44, 83, 100, 0.3);
     }
     
-    button:hover {
+    button:hover:not(:disabled) {
       background-color: #1a3a47;
       transform: translateY(-2px);
       box-shadow: 0 6px 20px rgba(44, 83, 100, 0.4);
+    }
+    
+    button:disabled {
+      background-color: #999;
+      cursor: not-allowed;
     }
     
     .checklist-section {
@@ -181,22 +193,90 @@
       align-items: center;
       justify-content: center;
     }
+    
+    .auto-fill-badge {
+      display: inline-block;
+      background: #2c5364;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-left: 8px;
+    }
+    
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .loading-overlay.active {
+      display: flex;
+    }
+    
+    .loading-content {
+      background: white;
+      padding: 40px;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    }
+    
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #2c5364;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-content">
+      <div class="spinner"></div>
+      <h3 style="color: #2c5364; margin-bottom: 10px;">Gerando e enviando PDF...</h3>
+      <p style="color: #666;">Aguarde um momento</p>
+    </div>
+  </div>
+
   <a href="index.html" class="back-link">← Voltar ao Menu</a>
   
   <form id="checklistForm" novalidate>
     <h1>Checklist Digital – Lift Control</h1>
 
-    <label for="nomeCondominio">Nome do Condomínio <span class="required">*</span></label>
-    <input id="nomeCondominio" name="nomeCondominio" type="text" required autocomplete="off" />
+    <label for="nomeCondominio">
+      Nome do Condomínio <span class="required">*</span>
+      <span class="auto-fill-badge">✓ Auto-preenchido</span>
+    </label>
+    <input id="nomeCondominio" name="nomeCondominio" type="text" required autocomplete="off" class="auto-filled" readonly />
 
-    <label for="endereco">Endereço Completo <span class="required">*</span></label>
-    <input id="endereco" name="endereco" type="text" required autocomplete="off" />
+    <label for="endereco">
+      Endereço Completo <span class="required">*</span>
+      <span class="auto-fill-badge">✓ Auto-preenchido</span>
+    </label>
+    <input id="endereco" name="endereco" type="text" required autocomplete="off" class="auto-filled" readonly />
 
-    <label for="totalElevadores">Total de Elevadores no Prédio <span class="required">*</span></label>
-    <input id="totalElevadores" name="totalElevadores" type="number" min="1" required autocomplete="off" />
+    <label for="totalElevadores">
+      Total de Elevadores no Prédio <span class="required">*</span>
+      <span class="auto-fill-badge">✓ Auto-preenchido</span>
+    </label>
+    <input id="totalElevadores" name="totalElevadores" type="number" min="1" required autocomplete="off" class="auto-filled" readonly />
 
     <label for="elevadorInspecionado">Elevador Inspecionado <span class="required">*</span></label>
     <select id="elevadorInspecionado" name="elevadorInspecionado" required>
@@ -208,11 +288,17 @@
       <option>Elevador 3</option>
     </select>
 
-    <label for="emailCondominio">Email do Condomínio <span class="required">*</span></label>
-    <input id="emailCondominio" name="emailCondominio" type="email" required autocomplete="off" />
+    <label for="emailCondominio">
+      Email do Condomínio <span class="required">*</span>
+      <span class="auto-fill-badge">✓ Auto-preenchido</span>
+    </label>
+    <input id="emailCondominio" name="emailCondominio" type="email" required autocomplete="off" class="auto-filled" readonly />
 
-    <label for="telefoneResponsavel">Telefone do Responsável <span class="required">*</span></label>
-    <input id="telefoneResponsavel" name="telefoneResponsavel" type="text" pattern="^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$" required autocomplete="off" placeholder="(11) 98765-4321" />
+    <label for="telefoneResponsavel">
+      Telefone do Responsável <span class="required">*</span>
+      <span class="auto-fill-badge">✓ Auto-preenchido</span>
+    </label>
+    <input id="telefoneResponsavel" name="telefoneResponsavel" type="text" pattern="^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$" required autocomplete="off" placeholder="(11) 98765-4321" class="auto-filled" readonly />
 
     <label for="dataManutencao">Data da Manutenção <span class="required">*</span></label>
     <input id="dataManutencao" name="dataManutencao" type="date" required />
@@ -286,15 +372,35 @@
       </div>
       
       <div class="signature-info">
-        ℹ️ <strong>Como funciona:</strong> Digite seu nome completo acima. Ele será incluído no PDF como sua assinatura digital, junto com data e hora da geração do documento.
+        ℹ️ <strong>Como funciona:</strong> Digite seu nome completo acima. O PDF será gerado automaticamente e <strong>enviado para o email do condomínio</strong> com sua assinatura digital.
       </div>
     </div>
 
-    <button type="submit">Gerar PDF Assinado</button>
+    <button type="submit" id="submitButton">Gerar e Enviar PDF</button>
   </form>
 
   <script>
-    // Preview da assinatura em tempo real
+    // ========== PROTEÇÃO DE ACESSO ==========
+    window.addEventListener('load', function() {
+      const auth = localStorage.getItem('liftcontrol_auth');
+      if (!auth) {
+        alert('Acesso não autorizado. Faça login primeiro.');
+        window.location.href = 'index.html';
+        return;
+      }
+      
+      // AUTO-PREENCHE OS DADOS DO CONDOMÍNIO
+      const dados = JSON.parse(localStorage.getItem('liftcontrol_dados'));
+      if (dados) {
+        document.getElementById('nomeCondominio').value = dados.nome;
+        document.getElementById('endereco').value = dados.endereco;
+        document.getElementById('emailCondominio').value = dados.email;
+        document.getElementById('telefoneResponsavel').value = dados.telefone;
+        document.getElementById('totalElevadores').value = dados.totalElevadores;
+      }
+    });
+
+    // ========== PREVIEW DA ASSINATURA ==========
     document.getElementById('assinaturaTecnico').addEventListener('input', function(e) {
       const preview = document.getElementById('signaturePreview');
       if (e.target.value.trim()) {
@@ -306,6 +412,12 @@
       }
     });
 
+    // ========== INICIALIZA EMAILJS ==========
+    // VOCÊ PRECISA CRIAR UMA CONTA EM: https://www.emailjs.com/
+    // E SUBSTITUIR ESTES VALORES:
+    emailjs.init("SUA_PUBLIC_KEY_AQUI"); // Substitua pela sua Public Key
+
+    // ========== GERAÇÃO E ENVIO DO PDF ==========
     document.getElementById('checklistForm').addEventListener('submit', async (e) => {
       e.preventDefault();
 
@@ -314,6 +426,10 @@
         e.target.reportValidity();
         return;
       }
+
+      // Mostra loading
+      document.getElementById('loadingOverlay').classList.add('active');
+      document.getElementById('submitButton').disabled = true;
 
       const dados = {};
       new FormData(e.target).forEach((value, key) => {
@@ -338,6 +454,7 @@
       }
       dados.dataManutencao = formatDateBR(dados.dataManutencao);
 
+      // ========== GERA O PDF ==========
       const { jsPDF } = window.jspdf;
       const pdf = new jsPDF('p', 'pt', 'a4');
       
@@ -345,7 +462,7 @@
       const pageWidth = pdf.internal.pageSize.width;
       const pageHeight = pdf.internal.pageSize.height;
       const contentWidth = pageWidth - (margin * 2);
-      const maxY = pageHeight - margin - 50; // Espaço extra para assinatura
+      const maxY = pageHeight - margin - 50;
       
       let y = margin;
       let currentPage = 1;
@@ -449,7 +566,6 @@
         y += 5;
       }
 
-      // Função para adicionar assinatura digital
       function printSignature() {
         checkPageBreak(80);
         
@@ -460,12 +576,10 @@
         pdf.text('Assinatura Digital', margin, y);
         y += 20;
         
-        // Box da assinatura
         pdf.setDrawColor(44, 83, 100);
         pdf.setLineWidth(1);
         pdf.rect(margin, y, contentWidth, 40);
         
-        // Nome do técnico em fonte cursiva
         pdf.setFont('helvetica', 'italic');
         pdf.setFontSize(16);
         pdf.setTextColor(44, 83, 100);
@@ -473,7 +587,6 @@
         
         y += 50;
         
-        // Data e hora da assinatura
         const agora = new Date();
         const dataHora = `${agora.toLocaleDateString('pt-BR')} às ${agora.toLocaleTimeString('pt-BR')}`;
         
@@ -485,6 +598,7 @@
         pdf.text(`Técnico: ${dados.assinaturaTecnico} - ${dados.empresaTecnico}`, margin, y);
       }
 
+      // ========== MONTA O PDF ==========
       printMainTitle('CHECKLIST DIGITAL - LIFT CONTROL');
       
       printSectionTitle('Dados do Condomínio');
@@ -547,7 +661,6 @@
       printSectionTitle('Observações / Recomendações');
       printLongText(dados.observacoes || 'Sem observações adicionais.');
       
-      // ADICIONA ASSINATURA DIGITAL
       printSignature();
       
       checkPageBreak(30);
@@ -576,10 +689,64 @@
         );
       }
 
-      const nomeArquivo = `Checklist_${dados.nomeCondominio.replace(/[^a-zA-Z0-9]/g, '')}_${dados.elevadorInspecionado.replace(/\s+/g, '')}_${new Date().toISOString().split('T')[0]}.pdf`;
-      pdf.save(nomeArquivo);
+      // Converte PDF para base64
+      const pdfBase64 = pdf.output('datauristring').split(',')[1];
       
-      alert('✅ PDF gerado e assinado digitalmente com sucesso!');
+      const nomeArquivo = `Checklist_${dados.nomeCondominio.replace(/[^a-zA-Z0-9]/g, '')}_${dados.elevadorInspecionado.replace(/\s+/g, '')}_${new Date().toISOString().split('T')[0]}.pdf`;
+
+      // ========== ENVIA EMAIL ==========
+      try {
+        await emailjs.send(
+          "SEU_SERVICE_ID",  // Substitua pelo seu Service ID
+          "SEU_TEMPLATE_ID", // Substitua pelo seu Template ID
+          {
+            to_email: dados.emailCondominio,
+            to_name: dados.nomeCondominio,
+            from_name: "Lift Control",
+            condominio: dados.nomeCondominio,
+            elevador: dados.elevadorInspecionado,
+            tecnico: dados.nomeTecnico,
+            data: dados.dataManutencao,
+            pdf_attachment: pdfBase64,
+            pdf_filename: nomeArquivo
+          }
+        );
+
+        // Sucesso
+        document.getElementById('loadingOverlay').classList.remove('active');
+        alert('✅ PDF gerado e enviado com sucesso para ' + dados.emailCondominio + '!\n\nO PDF também será baixado no seu dispositivo.');
+        
+        // Faz download também
+        pdf.save(nomeArquivo);
+        
+        // Limpa formulário (exceto dados pré-preenchidos)
+        document.getElementById('elevadorInspecionado').value = '';
+        document.getElementById('dataManutencao').value = '';
+        document.getElementById('tipoManutencao').value = '';
+        document.getElementById('nomeTecnico').value = '';
+        document.getElementById('empresaTecnico').value = '';
+        document.getElementById('registroTecnico').value = '';
+        document.getElementById('reparosExecutados').value = '';
+        document.getElementById('observacoes').value = '';
+        document.getElementById('assinaturaTecnico').value = '';
+        document.getElementById('signaturePreview').textContent = 'Sua assinatura aparecerá aqui';
+        
+        // Desmarca checkboxes
+        checkboxIds.forEach(id => {
+          const el = document.querySelector(`input[name="${id}"]`);
+          if (el) el.checked = false;
+        });
+        
+      } catch (error) {
+        console.error('Erro ao enviar email:', error);
+        document.getElementById('loadingOverlay').classList.remove('active');
+        
+        // Ainda assim faz o download
+        pdf.save(nomeArquivo);
+        alert('⚠️ PDF gerado e baixado com sucesso!\n\nPorém houve um erro ao enviar o email automaticamente.\nPor favor, envie o PDF manualmente para: ' + dados.emailCondominio);
+      }
+      
+      document.getElementById('submitButton').disabled = false;
     });
   </script>
 </body>
