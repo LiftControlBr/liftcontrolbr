@@ -139,6 +139,48 @@
       color: #e74c3c;
       font-weight: bold;
     }
+    
+    .signature-section {
+      margin-top: 30px;
+      padding: 25px;
+      background: #f0f8ff;
+      border: 2px dashed #2c5364;
+      border-radius: 10px;
+    }
+    
+    .signature-section h3 {
+      color: #2c5364;
+      margin-top: 0;
+      margin-bottom: 15px;
+      font-size: 18px;
+    }
+    
+    .signature-info {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 15px;
+      font-size: 14px;
+      color: #555;
+      border-left: 4px solid #2c5364;
+    }
+    
+    .signature-preview {
+      margin-top: 15px;
+      padding: 20px;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      text-align: center;
+      font-style: italic;
+      color: #2c5364;
+      font-size: 24px;
+      font-family: 'Brush Script MT', cursive;
+      min-height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
   </style>
 </head>
 <body>
@@ -233,10 +275,37 @@
     <label for="observacoes" style="margin-top: 20px;">Observações / Recomendações</label>
     <textarea id="observacoes" name="observacoes" placeholder="Observações adicionais ou recomendações para próximas manutenções..."></textarea>
 
-    <button type="submit">Gerar PDF</button>
+    <!-- SEÇÃO DE ASSINATURA DIGITAL -->
+    <div class="signature-section">
+      <h3>📝 Assinatura Digital</h3>
+      <label for="assinaturaTecnico">Digite seu nome completo para assinar <span class="required">*</span></label>
+      <input id="assinaturaTecnico" name="assinaturaTecnico" type="text" required autocomplete="off" placeholder="Nome completo do técnico responsável" />
+      
+      <div class="signature-preview" id="signaturePreview">
+        Sua assinatura aparecerá aqui
+      </div>
+      
+      <div class="signature-info">
+        ℹ️ <strong>Como funciona:</strong> Digite seu nome completo acima. Ele será incluído no PDF como sua assinatura digital, junto com data e hora da geração do documento.
+      </div>
+    </div>
+
+    <button type="submit">Gerar PDF Assinado</button>
   </form>
 
   <script>
+    // Preview da assinatura em tempo real
+    document.getElementById('assinaturaTecnico').addEventListener('input', function(e) {
+      const preview = document.getElementById('signaturePreview');
+      if (e.target.value.trim()) {
+        preview.textContent = e.target.value;
+        preview.style.color = '#2c5364';
+      } else {
+        preview.textContent = 'Sua assinatura aparecerá aqui';
+        preview.style.color = '#999';
+      }
+    });
+
     document.getElementById('checklistForm').addEventListener('submit', async (e) => {
       e.preventDefault();
 
@@ -276,7 +345,7 @@
       const pageWidth = pdf.internal.pageSize.width;
       const pageHeight = pdf.internal.pageSize.height;
       const contentWidth = pageWidth - (margin * 2);
-      const maxY = pageHeight - margin - 25;
+      const maxY = pageHeight - margin - 50; // Espaço extra para assinatura
       
       let y = margin;
       let currentPage = 1;
@@ -380,6 +449,42 @@
         y += 5;
       }
 
+      // Função para adicionar assinatura digital
+      function printSignature() {
+        checkPageBreak(80);
+        
+        y += 20;
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(12);
+        pdf.setTextColor(44, 83, 100);
+        pdf.text('Assinatura Digital', margin, y);
+        y += 20;
+        
+        // Box da assinatura
+        pdf.setDrawColor(44, 83, 100);
+        pdf.setLineWidth(1);
+        pdf.rect(margin, y, contentWidth, 40);
+        
+        // Nome do técnico em fonte cursiva
+        pdf.setFont('helvetica', 'italic');
+        pdf.setFontSize(16);
+        pdf.setTextColor(44, 83, 100);
+        pdf.text(dados.assinaturaTecnico, pageWidth / 2, y + 25, { align: 'center' });
+        
+        y += 50;
+        
+        // Data e hora da assinatura
+        const agora = new Date();
+        const dataHora = `${agora.toLocaleDateString('pt-BR')} às ${agora.toLocaleTimeString('pt-BR')}`;
+        
+        pdf.setFont('helvetica', 'normal');
+        pdf.setFontSize(8);
+        pdf.setTextColor(100, 100, 100);
+        pdf.text(`Documento assinado digitalmente em: ${dataHora}`, margin, y);
+        y += 12;
+        pdf.text(`Técnico: ${dados.assinaturaTecnico} - ${dados.empresaTecnico}`, margin, y);
+      }
+
       printMainTitle('CHECKLIST DIGITAL - LIFT CONTROL');
       
       printSectionTitle('Dados do Condomínio');
@@ -442,13 +547,16 @@
       printSectionTitle('Observações / Recomendações');
       printLongText(dados.observacoes || 'Sem observações adicionais.');
       
+      // ADICIONA ASSINATURA DIGITAL
+      printSignature();
+      
       checkPageBreak(30);
       y += 10;
       pdf.setFontSize(8);
       pdf.setFont('helvetica', 'italic');
       pdf.setTextColor(100, 100, 100);
       pdf.text(
-        `Documento gerado automaticamente por Lift Control em ${new Date().toLocaleDateString('pt-BR')}`,
+        `Documento gerado automaticamente por Lift Control`,
         pageWidth / 2,
         y,
         { align: 'center' }
@@ -471,7 +579,7 @@
       const nomeArquivo = `Checklist_${dados.nomeCondominio.replace(/[^a-zA-Z0-9]/g, '')}_${dados.elevadorInspecionado.replace(/\s+/g, '')}_${new Date().toISOString().split('T')[0]}.pdf`;
       pdf.save(nomeArquivo);
       
-      alert('PDF gerado com sucesso!');
+      alert('✅ PDF gerado e assinado digitalmente com sucesso!');
     });
   </script>
 </body>
