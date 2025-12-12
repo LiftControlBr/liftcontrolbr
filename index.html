@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Lift Control - Checklist de Elevadores</title>
+  <title>Lift Control - Acesso Seguro</title>
   <style>
     * {
       margin: 0;
@@ -19,11 +19,10 @@
       align-items: center;
       justify-content: center;
       padding: 20px;
-      color: #333;
     }
 
     .container {
-      max-width: 700px;
+      max-width: 500px;
       width: 100%;
       background: white;
       border-radius: 20px;
@@ -32,114 +31,111 @@
       text-align: center;
     }
 
-    h1 {
-      color: #2c5364;
+    .logo {
       font-size: 48px;
-      margin-bottom: 12px;
+      color: #2c5364;
       font-weight: 700;
+      margin-bottom: 12px;
     }
 
-    p.subtitle {
+    .subtitle {
       color: #666;
-      font-size: 18px;
+      font-size: 16px;
       margin-bottom: 40px;
-      line-height: 1.6;
     }
 
-    .buttons {
-      display: flex;
-      gap: 20px;
-      justify-content: center;
-      margin-bottom: 50px;
-      flex-wrap: wrap;
+    .access-form {
+      text-align: left;
     }
 
-    a.btn {
-      display: inline-block;
+    label {
+      display: block;
+      font-weight: 600;
+      color: #2c5364;
+      margin-bottom: 8px;
+      font-size: 15px;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px 16px;
+      font-size: 16px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      margin-bottom: 25px;
+      transition: border-color 0.3s;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #2c5364;
+    }
+
+    button {
+      width: 100%;
       background: #2c5364;
       color: white;
-      padding: 16px 40px;
+      border: none;
+      padding: 16px;
       border-radius: 50px;
-      text-decoration: none;
-      font-weight: 600;
       font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
       transition: all 0.3s ease;
       box-shadow: 0 4px 15px rgba(44, 83, 100, 0.3);
     }
 
-    a.btn:hover {
+    button:hover {
       background: #1a3a47;
       transform: translateY(-2px);
       box-shadow: 0 6px 20px rgba(44, 83, 100, 0.4);
     }
 
-    a.btn.secondary {
-      background: #5a7c8a;
-    }
-
-    a.btn.secondary:hover {
-      background: #46626e;
+    .error-message {
+      background: #ffe5e5;
+      color: #c00;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: none;
+      font-size: 14px;
+      border-left: 4px solid #c00;
     }
 
     .info-box {
-      text-align: left;
-      background: #f8f9fa;
-      border-left: 5px solid #2c5364;
-      padding: 30px;
+      background: #f0f8ff;
+      padding: 20px;
       border-radius: 12px;
-      font-size: 16px;
-      color: #444;
-      margin-bottom: 40px;
+      margin-top: 30px;
+      border-left: 4px solid #2c5364;
+      text-align: left;
     }
 
     .info-box h3 {
       color: #2c5364;
-      font-size: 22px;
-      margin-bottom: 20px;
-      text-align: center;
-    }
-
-    .info-box ul {
-      list-style: none;
-      padding: 0;
-    }
-
-    .info-box ul li {
-      padding: 12px 0;
-      border-bottom: 1px solid #e0e0e0;
+      margin-bottom: 10px;
       font-size: 16px;
     }
 
-    .info-box ul li:last-child {
-      border-bottom: none;
-    }
-
-    .info-box ul li:before {
-      content: "🔧";
-      margin-right: 12px;
-      font-size: 18px;
-    }
-
-    footer {
-      margin-top: 30px;
-      padding-top: 25px;
-      border-top: 1px solid #e0e0e0;
+    .info-box p {
+      color: #666;
       font-size: 14px;
-      color: #888;
+      line-height: 1.6;
     }
 
-    footer p {
-      margin-bottom: 10px;
-    }
-
-    footer a {
+    .info-box a {
       color: #2c5364;
+      font-weight: 600;
       text-decoration: none;
-      font-weight: 500;
     }
 
-    footer a:hover {
+    .info-box a:hover {
       text-decoration: underline;
+    }
+
+    #mainContent {
+      display: none;
     }
 
     @media (max-width: 600px) {
@@ -147,51 +143,137 @@
         padding: 40px 30px;
       }
 
-      h1 {
+      .logo {
         font-size: 36px;
-      }
-
-      p.subtitle {
-        font-size: 16px;
-      }
-
-      .buttons {
-        flex-direction: column;
-      }
-
-      a.btn {
-        width: 100%;
-        padding: 14px 30px;
-        font-size: 16px;
       }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Lift Control</h1>
-    <p class="subtitle">Sistema Digital de Checklist para Manutenção de Elevadores</p>
-    
-    <div class="buttons">
-      <a href="template-checklist.html" class="btn">Abrir Checklist</a>
-      <a href="demo-checklist.html" class="btn secondary">Ver Demonstração</a>
+    <!-- TELA DE LOGIN -->
+    <div id="loginScreen">
+      <div class="logo">Lift Control</div>
+      <p class="subtitle">Sistema Digital de Checklist para Elevadores</p>
+
+      <div class="error-message" id="errorMessage">
+        ❌ Código de acesso inválido. Verifique e tente novamente.
+      </div>
+
+      <form class="access-form" id="accessForm">
+        <label for="accessCode">Código de Acesso do Condomínio</label>
+        <input 
+          type="text" 
+          id="accessCode" 
+          placeholder="Digite o código fornecido"
+          autocomplete="off"
+          required
+        />
+
+        <button type="submit">Acessar Sistema</button>
+      </form>
+
+      <div class="info-box">
+        <h3>🔐 Primeiro acesso?</h3>
+        <p>
+          Entre em contato para receber seu código exclusivo:<br>
+          📧 <a href="mailto:liftcontrolbr@gmail.com">liftcontrolbr@gmail.com</a><br>
+          📱 <a href="https://wa.me/5513991561959">(13) 99156-1959</a>
+        </p>
+      </div>
     </div>
 
-    <div class="info-box">
-      <h3>Como funciona</h3>
-      <ul>
-        <li>Técnico acessa o checklist pelo celular</li>
-        <li>Preenche o formulário com dados da manutenção</li>
-        <li>Assina digitalmente</li>
-        <li>Gera PDF e envia ao condomínio</li>
-        <li>Histórico de manutenções registrado</li>
-      </ul>
-    </div>
+    <!-- CONTEÚDO PRINCIPAL (após login) -->
+    <div id="mainContent">
+      <div class="logo">Lift Control</div>
+      <p class="subtitle" id="condominioNome">Carregando...</p>
+      
+      <div style="display: flex; gap: 15px; flex-direction: column; margin-top: 30px;">
+        <a href="template-checklist.html" style="display: block; background: #2c5364; color: white; padding: 16px; border-radius: 50px; text-decoration: none; font-weight: 600; transition: all 0.3s;">
+          Abrir Checklist
+        </a>
+        <a href="demo-checklist.html" style="display: block; background: #5a7c8a; color: white; padding: 16px; border-radius: 50px; text-decoration: none; font-weight: 600; transition: all 0.3s;">
+          Ver Demonstração
+        </a>
+      </div>
 
-    <footer>
-      <p>Contato: <a href="mailto:liftcontrolbr@gmail.com">liftcontrolbr@gmail.com</a> | WhatsApp: <a href="https://wa.me/5513991561959">(13) 99156-1959</a></p>
-      <p>© 2025 Lift Control - Todos os direitos reservados</p>
-    </footer>
+      <button onclick="logout()" style="margin-top: 30px; background: #999;">
+        Sair
+      </button>
+    </div>
   </div>
+
+  <script>
+    // ========== BANCO DE DADOS DE CONDOMINIOS ==========
+    // VOCÊ ADICIONA NOVOS CLIENTES AQUI
+    const condominios = {
+      // Formato: "CODIGO-UNICO": "Nome do Condomínio"
+      "SOLAR2025": "Edifício Solar",
+      "ATLANTICO2025": "Condomínio Atlântico",
+      "CENTRAL2025": "Residencial Central Park",
+      // Adicione novos clientes aqui conforme fechar vendas
+    };
+
+    // ========== SISTEMA DE LOGIN ==========
+    document.getElementById('accessForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const code = document.getElementById('accessCode').value.trim().toUpperCase();
+      const errorMsg = document.getElementById('errorMessage');
+      
+      // Verifica se o código existe
+      if (condominios[code]) {
+        // ACESSO AUTORIZADO
+        localStorage.setItem('liftcontrol_auth', code);
+        localStorage.setItem('liftcontrol_condominio', condominios[code]);
+        showMainContent();
+      } else {
+        // ACESSO NEGADO
+        errorMsg.style.display = 'block';
+        document.getElementById('accessCode').value = '';
+        document.getElementById('accessCode').focus();
+        
+        // Esconde mensagem após 3 segundos
+        setTimeout(() => {
+          errorMsg.style.display = 'none';
+        }, 3000);
+      }
+    });
+
+    // ========== VERIFICA SE JÁ ESTÁ LOGADO ==========
+    window.addEventListener('load', function() {
+      const auth = localStorage.getItem('liftcontrol_auth');
+      if (auth && condominios[auth]) {
+        showMainContent();
+      }
+    });
+
+    // ========== MOSTRA CONTEÚDO PRINCIPAL ==========
+    function showMainContent() {
+      const condominio = localStorage.getItem('liftcontrol_condominio');
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('mainContent').style.display = 'block';
+      document.getElementById('condominioNome').textContent = condominio;
+    }
+
+    // ========== LOGOUT ==========
+    function logout() {
+      localStorage.removeItem('liftcontrol_auth');
+      localStorage.removeItem('liftcontrol_condominio');
+      location.reload();
+    }
+
+    // ========== PROTEGE AS OUTRAS PÁGINAS ==========
+    // Copie este código para template-checklist.html e demo-checklist.html
+    /*
+    window.addEventListener('load', function() {
+      const auth = localStorage.getItem('liftcontrol_auth');
+      if (!auth) {
+        alert('Acesso não autorizado. Faça login primeiro.');
+        window.location.href = 'index.html';
+      }
+    });
+    */
+  </script>
 </body>
 </html>
