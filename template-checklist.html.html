@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Checklist Digital – Lift Control</title>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -85,7 +84,6 @@
       border-color: #2c5364;
     }
     
-    /* Campos pré-preenchidos ficam com fundo cinza claro */
     input.auto-filled, select.auto-filled {
       background-color: #f0f8ff;
       border-color: #2c5364;
@@ -361,7 +359,6 @@
     <label for="observacoes" style="margin-top: 20px;">Observações / Recomendações</label>
     <textarea id="observacoes" name="observacoes" placeholder="Observações adicionais ou recomendações para próximas manutenções..."></textarea>
 
-    <!-- SEÇÃO DE ASSINATURA DIGITAL -->
     <div class="signature-section">
       <h3>📝 Assinatura Digital</h3>
       <label for="assinaturaTecnico">Digite seu nome completo para assinar <span class="required">*</span></label>
@@ -380,6 +377,10 @@
   </form>
 
   <script>
+    // ========== CONFIGURAÇÃO SENDGRID ==========
+    // SUBSTITUA PELA SUA API KEY DO SENDGRID
+    const SENDGRID_API_KEY = 'SUA_API_KEY_SENDGRID_AQUI';
+    
     // ========== PROTEÇÃO DE ACESSO ==========
     window.addEventListener('load', function() {
       const auth = localStorage.getItem('liftcontrol_auth');
@@ -412,10 +413,68 @@
       }
     });
 
-    // ========== INICIALIZA EMAILJS ==========
-    // VOCÊ PRECISA CRIAR UMA CONTA EM: https://www.emailjs.com/
-    // E SUBSTITUIR ESTES VALORES:
-    emailjs.init("SUA_PUBLIC_KEY_AQUI"); // Substitua pela sua Public Key
+    // ========== FUNÇÃO PARA ENVIAR EMAIL VIA SENDGRID ==========
+    async function enviarEmailSendGrid(emailDestino, nomeDestino, pdfBase64, nomeArquivo, dadosManutencao) {
+      const emailContent = `
+Olá ${nomeDestino},
+
+Segue em anexo o checklist de manutenção do elevador.
+
+DETALHES DA MANUTENÇÃO:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🏢 Condomínio: ${dadosManutencao.condominio}
+🛗 Elevador: ${dadosManutencao.elevador}
+👨‍🔧 Técnico: ${dadosManutencao.tecnico}
+📅 Data: ${dadosManutencao.data}
+
+Documento gerado automaticamente pelo sistema Lift Control.
+
+Atenciosamente,
+Equipe Lift Control
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📞 (13) 99156-1959
+📧 liftcontrolbr@gmail.com
+🌐 liftcontrolbr.com
+      `.trim();
+
+      const payload = {
+        personalizations: [{
+          to: [{ email: emailDestino, name: nomeDestino }]
+        }],
+        from: {
+          email: "liftcontrolbr@gmail.com",
+          name: "Lift Control"
+        },
+        subject: `Checklist de Manutenção - ${dadosManutencao.condominio} - ${dadosManutencao.elevador}`,
+        content: [{
+          type: "text/plain",
+          value: emailContent
+        }],
+        attachments: [{
+          content: pdfBase64,
+          filename: nomeArquivo,
+          type: "application/pdf",
+          disposition: "attachment"
+        }]
+      };
+
+      const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${SENDGRID_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(`SendGrid error: ${response.status} - ${error}`);
+      }
+
+      return true;
+    }
 
     // ========== GERAÇÃO E ENVIO DO PDF ==========
     document.getElementById('checklistForm').addEventListener('submit', async (e) => {
@@ -427,7 +486,12 @@
         return;
       }
 
-      // Mostra loading
+      // Verifica se API Key está configurada
+      if (SENDGRID_API_KEY === 'SUA_API_KEY_SENDGRID_AQUI') {
+        alert('⚠️ ATENÇÃO: Configure sua API Key do SendGrid no código!\n\nVeja o arquivo GUIA_SENDGRID.md para instruções.');
+        return;
+      }
+
       document.getElementById('loadingOverlay').classList.add('active');
       document.getElementById('submitButton').disabled = true;
 
@@ -454,7 +518,7 @@
       }
       dados.dataManutencao = formatDateBR(dados.dataManutencao);
 
-      // ========== GERA O PDF ==========
+      // [CÓDIGO DE GERAÇÃO DO PDF - MESMO DO ANTERIOR]
       const { jsPDF } = window.jspdf;
       const pdf = new jsPDF('p', 'pt', 'a4');
       
@@ -598,7 +662,6 @@
         pdf.text(`Técnico: ${dados.assinaturaTecnico} - ${dados.empresaTecnico}`, margin, y);
       }
 
-      // ========== MONTA O PDF ==========
       printMainTitle('CHECKLIST DIGITAL - LIFT CONTROL');
       
       printSectionTitle('Dados do Condomínio');
@@ -694,32 +757,27 @@
       
       const nomeArquivo = `Checklist_${dados.nomeCondominio.replace(/[^a-zA-Z0-9]/g, '')}_${dados.elevadorInspecionado.replace(/\s+/g, '')}_${new Date().toISOString().split('T')[0]}.pdf`;
 
-      // ========== ENVIA EMAIL ==========
+      // ========== ENVIA EMAIL VIA SENDGRID ==========
       try {
-        await emailjs.send(
-          "SEU_SERVICE_ID",  // Substitua pelo seu Service ID
-          "SEU_TEMPLATE_ID", // Substitua pelo seu Template ID
+        await enviarEmailSendGrid(
+          dados.emailCondominio,
+          dados.nomeCondominio,
+          pdfBase64,
+          nomeArquivo,
           {
-            to_email: dados.emailCondominio,
-            to_name: dados.nomeCondominio,
-            from_name: "Lift Control",
             condominio: dados.nomeCondominio,
             elevador: dados.elevadorInspecionado,
             tecnico: dados.nomeTecnico,
-            data: dados.dataManutencao,
-            pdf_attachment: pdfBase64,
-            pdf_filename: nomeArquivo
+            data: dados.dataManutencao
           }
         );
 
-        // Sucesso
         document.getElementById('loadingOverlay').classList.remove('active');
         alert('✅ PDF gerado e enviado com sucesso para ' + dados.emailCondominio + '!\n\nO PDF também será baixado no seu dispositivo.');
         
-        // Faz download também
         pdf.save(nomeArquivo);
         
-        // Limpa formulário (exceto dados pré-preenchidos)
+        // Limpa formulário
         document.getElementById('elevadorInspecionado').value = '';
         document.getElementById('dataManutencao').value = '';
         document.getElementById('tipoManutencao').value = '';
@@ -731,7 +789,6 @@
         document.getElementById('assinaturaTecnico').value = '';
         document.getElementById('signaturePreview').textContent = 'Sua assinatura aparecerá aqui';
         
-        // Desmarca checkboxes
         checkboxIds.forEach(id => {
           const el = document.querySelector(`input[name="${id}"]`);
           if (el) el.checked = false;
@@ -741,9 +798,8 @@
         console.error('Erro ao enviar email:', error);
         document.getElementById('loadingOverlay').classList.remove('active');
         
-        // Ainda assim faz o download
         pdf.save(nomeArquivo);
-        alert('⚠️ PDF gerado e baixado com sucesso!\n\nPorém houve um erro ao enviar o email automaticamente.\nPor favor, envie o PDF manualmente para: ' + dados.emailCondominio);
+        alert('⚠️ PDF gerado e baixado com sucesso!\n\nPorém houve um erro ao enviar o email automaticamente:\n' + error.message + '\n\nPor favor, envie o PDF manualmente para: ' + dados.emailCondominio);
       }
       
       document.getElementById('submitButton').disabled = false;
