@@ -1,99 +1,197 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Lift Control - Checklist de Elevadores</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
-    margin: 0; padding: 0; color: #333;
-  }
-  .container {
-    max-width: 700px;
-    margin: 80px auto;
-    background: white;
-    border-radius: 15px;
-    padding: 40px 30px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-    text-align: center;
-  }
-  h1 {
-    margin-bottom: 8px;
-    font-weight: bold;
-    color: #2c3e50;
-  }
-  p.subtitle {
-    margin-bottom: 30px;
-    color: #555;
-    font-size: 1.1rem;
-  }
-  a.btn {
-    display: inline-block;
-    background: #2c3e50;
-    color: white;
-    padding: 14px 35px;
-    border-radius: 50px;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 1.1rem;
-    margin: 0 15px 20px 15px;
-    transition: background-color 0.3s ease;
-  }
-  a.btn:hover {
-    background: #1b2a38;
-  }
-  .info-box {
-    text-align: left;
-    background: #eaf1f7;
-    border-left: 5px solid #2c3e50;
-    padding: 20px;
-    border-radius: 8px;
-    font-size: 1rem;
-    color: #444;
-  }
-  .info-box ul {
-    padding-left: 20px;
-  }
-  footer {
-    margin-top: 40px;
-    font-size: 0.9rem;
-    color: #888;
-  }
-  footer a {
-    color: #3498db;
-    text-decoration: none;
-  }
-  footer a:hover {
-    text-decoration: underline;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lift Control - Checklist de Elevadores</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #2c5364 0%, #203a43 50%, #0f2027 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: #333;
+    }
+
+    .container {
+      max-width: 700px;
+      width: 100%;
+      background: white;
+      border-radius: 20px;
+      padding: 50px 40px;
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.4);
+      text-align: center;
+    }
+
+    h1 {
+      color: #2c5364;
+      font-size: 48px;
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+
+    p.subtitle {
+      color: #666;
+      font-size: 18px;
+      margin-bottom: 40px;
+      line-height: 1.6;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin-bottom: 50px;
+      flex-wrap: wrap;
+    }
+
+    a.btn {
+      display: inline-block;
+      background: #2c5364;
+      color: white;
+      padding: 16px 40px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 18px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(44, 83, 100, 0.3);
+    }
+
+    a.btn:hover {
+      background: #1a3a47;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(44, 83, 100, 0.4);
+    }
+
+    a.btn.secondary {
+      background: #5a7c8a;
+    }
+
+    a.btn.secondary:hover {
+      background: #46626e;
+    }
+
+    .info-box {
+      text-align: left;
+      background: #f8f9fa;
+      border-left: 5px solid #2c5364;
+      padding: 30px;
+      border-radius: 12px;
+      font-size: 16px;
+      color: #444;
+      margin-bottom: 40px;
+    }
+
+    .info-box h3 {
+      color: #2c5364;
+      font-size: 22px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .info-box ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .info-box ul li {
+      padding: 12px 0;
+      border-bottom: 1px solid #e0e0e0;
+      font-size: 16px;
+    }
+
+    .info-box ul li:last-child {
+      border-bottom: none;
+    }
+
+    .info-box ul li:before {
+      content: "🔧";
+      margin-right: 12px;
+      font-size: 18px;
+    }
+
+    footer {
+      margin-top: 30px;
+      padding-top: 25px;
+      border-top: 1px solid #e0e0e0;
+      font-size: 14px;
+      color: #888;
+    }
+
+    footer p {
+      margin-bottom: 10px;
+    }
+
+    footer a {
+      color: #2c5364;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 40px 30px;
+      }
+
+      h1 {
+        font-size: 36px;
+      }
+
+      p.subtitle {
+        font-size: 16px;
+      }
+
+      .buttons {
+        flex-direction: column;
+      }
+
+      a.btn {
+        width: 100%;
+        padding: 14px 30px;
+        font-size: 16px;
+      }
+    }
+  </style>
 </head>
 <body>
-<div class="container">
-  <h1>Lift Control</h1>
-  <p class="subtitle">Sistema Digital de Checklist para Manutenção de Elevadores</p>
+  <div class="container">
+    <h1>Lift Control</h1>
+    <p class="subtitle">Sistema Digital de Checklist para Manutenção de Elevadores</p>
+    
+    <div class="buttons">
+      <a href="template-checklist.html" class="btn">Abrir Checklist</a>
+      <a href="demo-checklist.html" class="btn secondary">Ver Demonstração</a>
+    </div>
 
-  <a href="template-checklist.html" class="btn" target="_blank" rel="noopener noreferrer">Abrir Checklist</a>
-  <a href="demo-checklist.html" class="btn" target="_blank" rel="noopener noreferrer">Ver Demonstração</a>
+    <div class="info-box">
+      <h3>Como funciona</h3>
+      <ul>
+        <li>Técnico acessa o checklist pelo celular</li>
+        <li>Preenche o formulário com dados da manutenção</li>
+        <li>Assina digitalmente</li>
+        <li>Gera PDF e envia ao condomínio</li>
+        <li>Histórico de manutenções registrado</li>
+      </ul>
+    </div>
 
-  <div class="info-box">
-    <h3>Como funciona</h3>
-    <ul>
-      <li>👉 Técnico acessa o checklist pelo celular</li>
-      <li>👉 Preenche o formulário com dados da manutenção</li>
-      <li>👉 Assina digitalmente</li>
-      <li>👉 Gera PDF e envia ao condomínio</li>
-      <li>👉 Histórico de manutenções registrado</li>
-    </ul>
+    <footer>
+      <p>Contato: <a href="mailto:liftcontrolbr@gmail.com">liftcontrolbr@gmail.com</a> | WhatsApp: <a href="https://wa.me/5513991561959">(13) 99156-1959</a></p>
+      <p>© 2025 Lift Control - Todos os direitos reservados</p>
+    </footer>
   </div>
-
-  <footer>
-    <p>Contato: <a href="mailto:liftcontrolbr@gmail.com">liftcontrolbr@gmail.com</a> | WhatsApp: (13) 99156-1959</p>
-    <p>© 2025 Lift Control - Todos os direitos reservados</p>
-  </footer>
-</div>
 </body>
 </html>
-
