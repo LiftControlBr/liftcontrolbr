@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Checklist Digital – Lift Control - PDF Texto Limpo</title>
+  <title>Checklist Digital – Lift Control</title>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <style>
     body {
@@ -19,6 +19,19 @@
       padding: 30px 40px;
       border-radius: 10px;
       box-shadow: 0 0 15px rgba(0,0,0,.1);
+    }
+    h1 {
+      color: #223151;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    h2 {
+      color: #223151;
+      margin-top: 30px;
+      margin-bottom: 15px;
+      font-size: 18px;
+      border-bottom: 2px solid #223151;
+      padding-bottom: 8px;
     }
     label {
       display: block;
@@ -36,10 +49,10 @@
       font-weight: 500;
       color: #223151;
       resize: vertical;
-      min-height: 60px;
     }
     textarea {
       min-height: 100px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
     label.check-item {
       display: flex;
@@ -55,6 +68,7 @@
       margin-right: 10px;
       width: 22px;
       height: 22px;
+      cursor: pointer;
     }
     button {
       margin-top: 30px;
@@ -72,22 +86,33 @@
     button:hover {
       background-color: #1a273e;
     }
+    .checklist-section {
+      margin-top: 20px;
+      background-color: #f9f9f9;
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid #e0e0e0;
+    }
+    .required {
+      color: red;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
   <form id="checklistForm" novalidate>
     <h1>Checklist Digital – Lift Control</h1>
 
-    <label for="nomeCondominio">Nome do Condomínio <span style="color:red">*</span></label>
+    <label for="nomeCondominio">Nome do Condomínio <span class="required">*</span></label>
     <input id="nomeCondominio" name="nomeCondominio" type="text" required autocomplete="off" />
 
-    <label for="endereco">Endereço Completo <span style="color:red">*</span></label>
+    <label for="endereco">Endereço Completo <span class="required">*</span></label>
     <input id="endereco" name="endereco" type="text" required autocomplete="off" />
 
-    <label for="totalElevadores">Total de Elevadores no Prédio <span style="color:red">*</span></label>
+    <label for="totalElevadores">Total de Elevadores no Prédio <span class="required">*</span></label>
     <input id="totalElevadores" name="totalElevadores" type="number" min="1" required autocomplete="off" />
 
-    <label for="elevadorInspecionado">Elevador Inspecionado <span style="color:red">*</span></label>
+    <label for="elevadorInspecionado">Elevador Inspecionado <span class="required">*</span></label>
     <select id="elevadorInspecionado" name="elevadorInspecionado" required>
       <option value="" disabled selected>Selecione...</option>
       <option>Social</option>
@@ -97,16 +122,16 @@
       <option>Elevador 3</option>
     </select>
 
-    <label for="emailCondominio">Email do Condomínio <span style="color:red">*</span></label>
+    <label for="emailCondominio">Email do Condomínio <span class="required">*</span></label>
     <input id="emailCondominio" name="emailCondominio" type="email" required autocomplete="off" />
 
-    <label for="telefoneResponsavel">Telefone do Responsável <span style="color:red">*</span></label>
-    <input id="telefoneResponsavel" name="telefoneResponsavel" type="text" pattern="^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$" required autocomplete="off" />
+    <label for="telefoneResponsavel">Telefone do Responsável <span class="required">*</span></label>
+    <input id="telefoneResponsavel" name="telefoneResponsavel" type="text" pattern="^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$" required autocomplete="off" placeholder="(11) 98765-4321" />
 
-    <label for="dataManutencao">Data da Manutenção <span style="color:red">*</span></label>
+    <label for="dataManutencao">Data da Manutenção <span class="required">*</span></label>
     <input id="dataManutencao" name="dataManutencao" type="date" required />
 
-    <label for="tipoManutencao">Tipo de Manutenção <span style="color:red">*</span></label>
+    <label for="tipoManutencao">Tipo de Manutenção <span class="required">*</span></label>
     <select id="tipoManutencao" name="tipoManutencao" required>
       <option value="" disabled selected>Selecione...</option>
       <option>Preventiva</option>
@@ -114,10 +139,10 @@
       <option>Emergencial</option>
     </select>
 
-    <label for="nomeTecnico">Nome Completo do Técnico <span style="color:red">*</span></label>
+    <label for="nomeTecnico">Nome Completo do Técnico <span class="required">*</span></label>
     <input id="nomeTecnico" name="nomeTecnico" type="text" required autocomplete="off" />
 
-    <label for="empresaTecnico">Empresa do Técnico <span style="color:red">*</span></label>
+    <label for="empresaTecnico">Empresa do Técnico <span class="required">*</span></label>
     <input id="empresaTecnico" name="empresaTecnico" type="text" required autocomplete="off" />
 
     <label for="registroTecnico">CREA / Registro Profissional</label>
@@ -158,39 +183,45 @@
       <label class="check-item"><input type="checkbox" name="cabosEletricos" /> Cabos elétricos</label>
     </div>
 
-    <label for="reparosExecutados" style="margin-top: 30px;">Reparos Executados <span style="color:red">*</span></label>
-    <textarea id="reparosExecutados" name="reparosExecutados" minlength="10" required></textarea>
+    <label for="reparosExecutados" style="margin-top: 30px;">Reparos Executados <span class="required">*</span></label>
+    <textarea id="reparosExecutados" name="reparosExecutados" minlength="10" required placeholder="Descreva os reparos executados durante a manutenção..."></textarea>
 
     <label for="observacoes" style="margin-top: 20px;">Observações / Recomendações</label>
-    <textarea id="observacoes" name="observacoes"></textarea>
+    <textarea id="observacoes" name="observacoes" placeholder="Observações adicionais ou recomendações para próximas manutenções..."></textarea>
 
     <button type="submit">Gerar PDF</button>
   </form>
 
-  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <script>
     document.getElementById('checklistForm').addEventListener('submit', async (e) => {
       e.preventDefault();
 
+      // Validação do formulário
       if (!e.target.checkValidity()) {
         alert('Por favor, preencha todos os campos obrigatórios corretamente.');
         e.target.reportValidity();
         return;
       }
 
+      // Coleta dos dados do formulário
       const dados = {};
       new FormData(e.target).forEach((value, key) => {
         dados[key] = value;
       });
 
-      const checkboxIds = ['motor','freio','redutor','quadro','limitador','cabos','polias','ventilacao','iluminacaoEmergencia','limpeza',
-                          'portas','botoes','display','iluminacaoInterna','ventilacaoCabina','interfone','espelho','piso',
-                          'amortecedores','limpezaPoco','drenagem','iluminacaoPoco','cabosEletricos'];
+      // Coleta dos checkboxes
+      const checkboxIds = [
+        'motor','freio','redutor','quadro','limitador','cabos','polias','ventilacao','iluminacaoEmergencia','limpeza',
+        'portas','botoes','display','iluminacaoInterna','ventilacaoCabina','interfone','espelho','piso',
+        'amortecedores','limpezaPoco','drenagem','iluminacaoPoco','cabosEletricos'
+      ];
+      
       checkboxIds.forEach(id => {
         const el = e.target.elements[id];
-        dados[id] = el && el.checked ? "Ok" : "Pendente";
+        dados[id] = el && el.checked ? "✓ Ok" : "✗ Pendente";
       });
 
+      // Formata a data para o padrão brasileiro
       function formatDateBR(dateStr) {
         if(!dateStr) return '-';
         const [year, month, day] = dateStr.split("-");
@@ -198,108 +229,238 @@
       }
       dados.dataManutencao = formatDateBR(dados.dataManutencao);
 
+      // Inicializa jsPDF
       const { jsPDF } = window.jspdf;
       const pdf = new jsPDF('p', 'pt', 'a4');
-      const margin = 40;
-      const pageWidth = pdf.internal.pageSize.width - margin * 2;
-      const lineHeight = 20;
+      
+      // Configurações de página
+      const margin = 50;
+      const pageWidth = pdf.internal.pageSize.width;
+      const pageHeight = pdf.internal.pageSize.height;
+      const contentWidth = pageWidth - (margin * 2);
+      const maxY = pageHeight - margin - 30; // Deixa espaço para rodapé
+      
       let y = margin;
+      let currentPage = 1;
 
-      function printTitle(text) {
+      // Função para adicionar nova página
+      function addNewPage() {
+        pdf.addPage();
+        currentPage++;
+        y = margin;
+        addPageNumber();
+      }
+
+      // Função para verificar se precisa de nova página
+      function checkPageBreak(requiredSpace) {
+        if (y + requiredSpace > maxY) {
+          addNewPage();
+        }
+      }
+
+      // Função para adicionar número da página
+      function addPageNumber() {
+        pdf.setFontSize(9);
+        pdf.setFont('helvetica', 'normal');
+        pdf.setTextColor(100, 100, 100);
+        pdf.text(
+          `Página ${currentPage}`,
+          pageWidth / 2,
+          pageHeight - 20,
+          { align: 'center' }
+        );
+        pdf.setTextColor(0, 0, 0);
+      }
+
+      // Função para imprimir título principal
+      function printMainTitle(text) {
+        checkPageBreak(50);
         pdf.setFont('helvetica', 'bold');
-        pdf.setFontSize(18);
+        pdf.setFontSize(20);
+        pdf.setTextColor(34, 49, 81);
+        pdf.text(text, pageWidth / 2, y, { align: 'center' });
+        y += 35;
+      }
+
+      // Função para imprimir título de seção
+      function printSectionTitle(text) {
+        checkPageBreak(40);
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(16);
+        pdf.setTextColor(34, 49, 81);
+        
+        // Adiciona linha abaixo do título
         pdf.text(text, margin, y);
-        y += lineHeight + 8;
+        y += 5;
+        pdf.setDrawColor(34, 49, 81);
+        pdf.setLineWidth(2);
+        pdf.line(margin, y, pageWidth - margin, y);
+        y += 20;
+        pdf.setTextColor(0, 0, 0);
       }
 
+      // Função para imprimir campo (label: valor)
       function printField(label, value) {
+        checkPageBreak(25);
+        
         pdf.setFont('helvetica', 'bold');
-        pdf.setFontSize(14);
+        pdf.setFontSize(11);
         pdf.text(label + ':', margin, y);
+        
         pdf.setFont('helvetica', 'normal');
-        pdf.setFontSize(14);
-        pdf.text(value, margin + 100, y);
-        y += lineHeight;
+        pdf.setFontSize(11);
+        
+        const labelWidth = pdf.getTextWidth(label + ': ');
+        const remainingWidth = contentWidth - labelWidth;
+        const lines = pdf.splitTextToSize(value, remainingWidth);
+        
+        pdf.text(lines[0], margin + labelWidth, y);
+        
+        // Se houver mais linhas, imprime nas próximas
+        for (let i = 1; i < lines.length; i++) {
+          y += 15;
+          checkPageBreak(20);
+          pdf.text(lines[i], margin + labelWidth, y);
+        }
+        
+        y += 18;
       }
 
-      function printList(title, list) {
-        printTitle(title);
+      // Função para imprimir item de checklist
+      function printCheckItem(label, status) {
+        checkPageBreak(22);
+        
         pdf.setFont('helvetica', 'normal');
-        pdf.setFontSize(13);
-        list.forEach(item => {
-          pdf.text('- ' + item, margin + 20, y);
-          y += lineHeight;
+        pdf.setFontSize(10);
+        
+        // Define cor baseada no status
+        if (status.includes('Ok')) {
+          pdf.setTextColor(0, 120, 0);
+        } else {
+          pdf.setTextColor(200, 0, 0);
+        }
+        
+        pdf.text(`${status}`, margin + 10, y);
+        
+        pdf.setTextColor(0, 0, 0);
+        pdf.text(`${label}`, margin + 80, y);
+        
+        y += 18;
+      }
+
+      // Função para imprimir texto longo com quebra
+      function printLongText(text) {
+        checkPageBreak(30);
+        
+        pdf.setFont('helvetica', 'normal');
+        pdf.setFontSize(11);
+        
+        const lines = pdf.splitTextToSize(text, contentWidth - 20);
+        
+        lines.forEach(line => {
+          checkPageBreak(20);
+          pdf.text(line, margin + 10, y);
+          y += 16;
         });
+        
         y += 10;
       }
 
-      printTitle('Dados do Condomínio');
+      // ========== GERAÇÃO DO CONTEÚDO ==========
+
+      // Cabeçalho
+      printMainTitle('CHECKLIST DIGITAL - LIFT CONTROL');
+      
+      // Dados do Condomínio
+      printSectionTitle('Dados do Condomínio');
       printField('Nome', dados.nomeCondominio);
       printField('Endereço', dados.endereco);
-      printField('Total Elevadores', dados.totalElevadores);
+      printField('Total de Elevadores', dados.totalElevadores);
       printField('Elevador Inspecionado', dados.elevadorInspecionado);
       printField('Email', dados.emailCondominio);
       printField('Telefone', dados.telefoneResponsavel);
-
-      printTitle('Manutenção');
+      
+      y += 10;
+      
+      // Dados da Manutenção
+      printSectionTitle('Dados da Manutenção');
       printField('Data', dados.dataManutencao);
       printField('Tipo', dados.tipoManutencao);
-      printField('Técnico', dados.nomeTecnico);
+      printField('Técnico Responsável', dados.nomeTecnico);
       printField('Empresa', dados.empresaTecnico);
-      printField('Registro', dados.registroTecnico || '-');
+      printField('Registro Profissional', dados.registroTecnico || 'Não informado');
+      
+      y += 10;
+      
+      // Casa de Máquinas
+      printSectionTitle('Casa de Máquinas');
+      printCheckItem('Motor de tração', dados.motor);
+      printCheckItem('Freio eletromagnético', dados.freio);
+      printCheckItem('Redutor', dados.redutor);
+      printCheckItem('Quadro de comando', dados.quadro);
+      printCheckItem('Limitador de velocidade', dados.limitador);
+      printCheckItem('Cabos de tração', dados.cabos);
+      printCheckItem('Polias', dados.polias);
+      printCheckItem('Ventilação da casa', dados.ventilacao);
+      printCheckItem('Iluminação de emergência', dados.iluminacaoEmergencia);
+      printCheckItem('Limpeza geral', dados.limpeza);
+      
+      y += 10;
+      
+      // Cabina
+      printSectionTitle('Cabina');
+      printCheckItem('Portas', dados.portas);
+      printCheckItem('Botões', dados.botoes);
+      printCheckItem('Display / Indicadores', dados.display);
+      printCheckItem('Iluminação interna', dados.iluminacaoInterna);
+      printCheckItem('Ventilação / Exaustor', dados.ventilacaoCabina);
+      printCheckItem('Interfone / Alarme', dados.interfone);
+      printCheckItem('Espelho / Acabamentos', dados.espelho);
+      printCheckItem('Piso / Nivelamento', dados.piso);
+      
+      y += 10;
+      
+      // Poço
+      printSectionTitle('Poço');
+      printCheckItem('Amortecedores', dados.amortecedores);
+      printCheckItem('Limpeza do poço', dados.limpezaPoco);
+      printCheckItem('Drenagem de água', dados.drenagem);
+      printCheckItem('Iluminação', dados.iluminacaoPoco);
+      printCheckItem('Cabos elétricos', dados.cabosEletricos);
+      
+      y += 10;
+      
+      // Reparos Executados
+      printSectionTitle('Reparos Executados');
+      printLongText(dados.reparosExecutados || 'Nenhum reparo executado.');
+      
+      // Observações
+      printSectionTitle('Observações / Recomendações');
+      printLongText(dados.observacoes || 'Sem observações adicionais.');
+      
+      // Rodapé final
+      checkPageBreak(40);
+      y += 20;
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'italic');
+      pdf.setTextColor(100, 100, 100);
+      pdf.text(
+        `Documento gerado automaticamente por Lift Control em ${new Date().toLocaleDateString('pt-BR')}`,
+        pageWidth / 2,
+        y,
+        { align: 'center' }
+      );
 
-      printList('Casa de Máquinas', [
-        `Motor de tração: ${dados.motor}`,
-        `Freio eletromagnético: ${dados.freio}`,
-        `Redutor: ${dados.redutor}`,
-        `Quadro de comando: ${dados.quadro}`,
-        `Limitador de velocidade: ${dados.limitador}`,
-        `Cabos de tração: ${dados.cabos}`,
-        `Polias: ${dados.polias}`,
-        `Ventilação: ${dados.ventilacao}`,
-        `Iluminação de emergência: ${dados.iluminacaoEmergencia}`,
-        `Limpeza geral: ${dados.limpeza}`
-      ]);
+      // Adiciona número na primeira página também
+      pdf.setPage(1);
+      addPageNumber();
 
-      printList('Cabina', [
-        `Portas: ${dados.portas}`,
-        `Botões: ${dados.botoes}`,
-        `Display / Indicadores: ${dados.display}`,
-        `Iluminação interna: ${dados.iluminacaoInterna}`,
-        `Ventilação / Exaustor: ${dados.ventilacaoCabina}`,
-        `Interfone / Alarme: ${dados.interfone}`,
-        `Espelho / Acabamentos: ${dados.espelho}`,
-        `Piso / Nivelamento: ${dados.piso}`
-      ]);
-
-      printList('Poço', [
-        `Amortecedores: ${dados.amortecedores}`,
-        `Limpeza do poço: ${dados.limpezaPoco}`,
-        `Drenagem de água: ${dados.drenagem}`,
-        `Iluminação: ${dados.iluminacaoPoco}`,
-        `Cabos elétricos: ${dados.cabosEletricos}`
-      ]);
-
-      printTitle('Reparos Executados');
-      pdf.setFontSize(14);
-      pdf.setFont('helvetica', 'normal');
-      let splitText = pdf.splitTextToSize(dados.reparosExecutados || '-', pageWidth);
-      splitText.forEach(line => {
-        pdf.text(line, margin + 20, y);
-        y += lineHeight;
-      });
-
-      printTitle('Observações / Recomendações');
-      splitText = pdf.splitTextToSize(dados.observacoes || '-', pageWidth);
-      splitText.forEach(line => {
-        pdf.text(line, margin + 20, y);
-        y += lineHeight;
-      });
-
-      y += 15;
-      pdf.setFontSize(12);
-      pdf.text('Gerado por Lift Control - 2025', margin, y, {align: 'center', maxWidth: pageWidth});
-
-      pdf.save(`Checklist_${dados.nomeCondominio.replace(/\s+/g,"")}_${dados.elevadorInspecionado.replace(/\s+/g,"")}.pdf`);
+      // Salva o PDF
+      const nomeArquivo = `Checklist_${dados.nomeCondominio.replace(/[^a-zA-Z0-9]/g, '')}_${dados.elevadorInspecionado.replace(/\s+/g, '')}_${new Date().toISOString().split('T')[0]}.pdf`;
+      pdf.save(nomeArquivo);
+      
+      alert('PDF gerado com sucesso!');
     });
-</script>
+  </script>
+</body>
+</html>
