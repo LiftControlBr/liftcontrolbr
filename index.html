@@ -207,10 +207,28 @@
     // ========== BANCO DE DADOS DE CONDOMINIOS ==========
     // VOCÊ ADICIONA NOVOS CLIENTES AQUI
     const condominios = {
-      // Formato: "CODIGO-UNICO": "Nome do Condomínio"
-      "SOLAR2025": "Edifício Solar",
-      "ATLANTICO2025": "Condomínio Atlântico",
-      "CENTRAL2025": "Residencial Central Park",
+      // Formato completo com todos os dados
+      "SOLAR2025": {
+        nome: "Edifício Solar",
+        endereco: "Rua das Flores, 123 - Gonzaga, Santos/SP",
+        email: "sindico@edificiosolar.com.br",
+        telefone: "(13) 3234-5678",
+        totalElevadores: "2"
+      },
+      "ATLANTICO2025": {
+        nome: "Condomínio Atlântico",
+        endereco: "Av. Atlântica, 456 - Boqueirão, Santos/SP",
+        email: "contato@condominioatlantico.com.br",
+        telefone: "(13) 3345-6789",
+        totalElevadores: "3"
+      },
+      "CENTRAL2025": {
+        nome: "Residencial Central Park",
+        endereco: "Rua Central, 789 - Centro, Santos/SP",
+        email: "administracao@centralpark.com.br",
+        telefone: "(13) 3456-7890",
+        totalElevadores: "4"
+      },
       // Adicione novos clientes aqui conforme fechar vendas
     };
 
@@ -225,7 +243,10 @@
       if (condominios[code]) {
         // ACESSO AUTORIZADO
         localStorage.setItem('liftcontrol_auth', code);
-        localStorage.setItem('liftcontrol_condominio', condominios[code]);
+        
+        // Salva TODOS os dados do condomínio
+        localStorage.setItem('liftcontrol_dados', JSON.stringify(condominios[code]));
+        
         showMainContent();
       } else {
         // ACESSO NEGADO
@@ -250,16 +271,16 @@
 
     // ========== MOSTRA CONTEÚDO PRINCIPAL ==========
     function showMainContent() {
-      const condominio = localStorage.getItem('liftcontrol_condominio');
+      const dados = JSON.parse(localStorage.getItem('liftcontrol_dados'));
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('mainContent').style.display = 'block';
-      document.getElementById('condominioNome').textContent = condominio;
+      document.getElementById('condominioNome').textContent = dados.nome;
     }
 
     // ========== LOGOUT ==========
     function logout() {
       localStorage.removeItem('liftcontrol_auth');
-      localStorage.removeItem('liftcontrol_condominio');
+      localStorage.removeItem('liftcontrol_dados');
       location.reload();
     }
 
