@@ -234,11 +234,11 @@
       const pdf = new jsPDF('p', 'pt', 'a4');
       
       // Configurações de página
-      const margin = 50;
+      const margin = 40;
       const pageWidth = pdf.internal.pageSize.width;
       const pageHeight = pdf.internal.pageSize.height;
       const contentWidth = pageWidth - (margin * 2);
-      const maxY = pageHeight - margin - 30; // Deixa espaço para rodapé
+      const maxY = pageHeight - margin - 25; // Deixa espaço para rodapé
       
       let y = margin;
       let currentPage = 1;
@@ -248,7 +248,6 @@
         pdf.addPage();
         currentPage++;
         y = margin;
-        addPageNumber();
       }
 
       // Função para verificar se precisa de nova página
@@ -276,41 +275,41 @@
       function printMainTitle(text) {
         checkPageBreak(50);
         pdf.setFont('helvetica', 'bold');
-        pdf.setFontSize(20);
+        pdf.setFontSize(18);
         pdf.setTextColor(34, 49, 81);
         pdf.text(text, pageWidth / 2, y, { align: 'center' });
-        y += 35;
+        y += 25;
       }
 
       // Função para imprimir título de seção
       function printSectionTitle(text) {
-        checkPageBreak(40);
+        checkPageBreak(30);
         pdf.setFont('helvetica', 'bold');
-        pdf.setFontSize(16);
+        pdf.setFontSize(13);
         pdf.setTextColor(34, 49, 81);
         
         // Adiciona linha abaixo do título
         pdf.text(text, margin, y);
-        y += 5;
+        y += 3;
         pdf.setDrawColor(34, 49, 81);
-        pdf.setLineWidth(2);
+        pdf.setLineWidth(1.5);
         pdf.line(margin, y, pageWidth - margin, y);
-        y += 20;
+        y += 12;
         pdf.setTextColor(0, 0, 0);
       }
 
       // Função para imprimir campo (label: valor)
       function printField(label, value) {
-        checkPageBreak(25);
+        checkPageBreak(20);
         
         pdf.setFont('helvetica', 'bold');
-        pdf.setFontSize(11);
+        pdf.setFontSize(9);
         pdf.text(label + ':', margin, y);
         
         pdf.setFont('helvetica', 'normal');
-        pdf.setFontSize(11);
+        pdf.setFontSize(9);
         
-        const labelWidth = pdf.getTextWidth(label + ': ');
+        const labelWidth = pdf.getTextWidth(label + ': ') + 5; // Adiciona espaço extra
         const remainingWidth = contentWidth - labelWidth;
         const lines = pdf.splitTextToSize(value, remainingWidth);
         
@@ -318,52 +317,53 @@
         
         // Se houver mais linhas, imprime nas próximas
         for (let i = 1; i < lines.length; i++) {
-          y += 15;
-          checkPageBreak(20);
+          y += 12;
+          checkPageBreak(15);
           pdf.text(lines[i], margin + labelWidth, y);
         }
         
-        y += 18;
+        y += 14;
       }
 
       // Função para imprimir item de checklist
       function printCheckItem(label, status) {
-        checkPageBreak(22);
+        checkPageBreak(18);
         
-        pdf.setFont('helvetica', 'normal');
-        pdf.setFontSize(10);
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(9);
         
         // Define cor baseada no status
         if (status.includes('Ok')) {
           pdf.setTextColor(0, 120, 0);
+          pdf.text('✓ Ok', margin + 10, y);
         } else {
           pdf.setTextColor(200, 0, 0);
+          pdf.text('✗ Pendente', margin + 10, y);
         }
         
-        pdf.text(`${status}`, margin + 10, y);
-        
         pdf.setTextColor(0, 0, 0);
-        pdf.text(`${label}`, margin + 80, y);
+        pdf.setFont('helvetica', 'normal');
+        pdf.text(label, margin + 90, y);
         
-        y += 18;
+        y += 14;
       }
 
       // Função para imprimir texto longo com quebra
       function printLongText(text) {
-        checkPageBreak(30);
+        checkPageBreak(25);
         
         pdf.setFont('helvetica', 'normal');
-        pdf.setFontSize(11);
+        pdf.setFontSize(9);
         
         const lines = pdf.splitTextToSize(text, contentWidth - 20);
         
         lines.forEach(line => {
-          checkPageBreak(20);
+          checkPageBreak(15);
           pdf.text(line, margin + 10, y);
-          y += 16;
+          y += 13;
         });
         
-        y += 10;
+        y += 5;
       }
 
       // ========== GERAÇÃO DO CONTEÚDO ==========
@@ -380,7 +380,7 @@
       printField('Email', dados.emailCondominio);
       printField('Telefone', dados.telefoneResponsavel);
       
-      y += 10;
+      y += 5;
       
       // Dados da Manutenção
       printSectionTitle('Dados da Manutenção');
@@ -390,7 +390,7 @@
       printField('Empresa', dados.empresaTecnico);
       printField('Registro Profissional', dados.registroTecnico || 'Não informado');
       
-      y += 10;
+      y += 5;
       
       // Casa de Máquinas
       printSectionTitle('Casa de Máquinas');
@@ -405,7 +405,7 @@
       printCheckItem('Iluminação de emergência', dados.iluminacaoEmergencia);
       printCheckItem('Limpeza geral', dados.limpeza);
       
-      y += 10;
+      y += 5;
       
       // Cabina
       printSectionTitle('Cabina');
@@ -418,7 +418,7 @@
       printCheckItem('Espelho / Acabamentos', dados.espelho);
       printCheckItem('Piso / Nivelamento', dados.piso);
       
-      y += 10;
+      y += 5;
       
       // Poço
       printSectionTitle('Poço');
@@ -428,7 +428,7 @@
       printCheckItem('Iluminação', dados.iluminacaoPoco);
       printCheckItem('Cabos elétricos', dados.cabosEletricos);
       
-      y += 10;
+      y += 5;
       
       // Reparos Executados
       printSectionTitle('Reparos Executados');
@@ -439,9 +439,9 @@
       printLongText(dados.observacoes || 'Sem observações adicionais.');
       
       // Rodapé final
-      checkPageBreak(40);
-      y += 20;
-      pdf.setFontSize(10);
+      checkPageBreak(30);
+      y += 10;
+      pdf.setFontSize(8);
       pdf.setFont('helvetica', 'italic');
       pdf.setTextColor(100, 100, 100);
       pdf.text(
@@ -451,9 +451,20 @@
         { align: 'center' }
       );
 
-      // Adiciona número na primeira página também
-      pdf.setPage(1);
-      addPageNumber();
+      // Adiciona número em todas as páginas
+      const totalPages = pdf.internal.pages.length - 1; // -1 porque a primeira página é vazia
+      for (let i = 1; i <= totalPages; i++) {
+        pdf.setPage(i);
+        pdf.setFontSize(9);
+        pdf.setFont('helvetica', 'normal');
+        pdf.setTextColor(100, 100, 100);
+        pdf.text(
+          `Página ${i} de ${totalPages}`,
+          pageWidth / 2,
+          pageHeight - 20,
+          { align: 'center' }
+        );
+      }
 
       // Salva o PDF
       const nomeArquivo = `Checklist_${dados.nomeCondominio.replace(/[^a-zA-Z0-9]/g, '')}_${dados.elevadorInspecionado.replace(/\s+/g, '')}_${new Date().toISOString().split('T')[0]}.pdf`;
